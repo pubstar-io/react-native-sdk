@@ -1,0 +1,43 @@
+{
+  "name": "react-native-pubstar",
+  "version": "1.1.8",
+  "description": "PubStar AD SDK helps developers easily integrate ads into React Native apps.",
+  "react-native": "js/index",
+  "source": "js/index",
+  "files": [
+    "js",
+    "android",
+    "ios",
+    "react-native-pubstar.podspec",
+    "!android/build",
+    "!ios/build",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__"
+  ],
+  "keywords": [
+    "react-native",
+    "ios",
+    "android"
+  ],
+  "repository": "https://github.com/<your_github_handle>/react-native-pubstar",
+  "author": "<Your Name> <your_email@your_provider.com> (https://github.com/<your_github_handle>)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/<your_github_handle>/react-native-pubstar/issues"
+  },
+  "homepage": "https://github.com/<your_github_handle>/react-native-pubstar#readme",
+  "devDependencies": {},
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "codegenConfig": {
+    "name": "RTNPubstarSpec",
+    "type": "modules",
+    "jsSrcsDir": "js",
+    "android": {
+      "javaPackageName": "io.pubstar"
+    }
+  }
+}
