@@ -4,9 +4,14 @@
  *
  * @format
  */
-import React, { use } from 'react';
-import { useState, useEffect } from 'react';
-import { SafeAreaView, StatusBar, Text, Button } from 'react-native';
+import React from 'react';
+import {
+  SafeAreaView,
+  StatusBar,
+  View,
+  Button,
+  StyleSheet,
+} from 'react-native';
 import RTNPubstar from 'rtn-pubstar/js/NativeRTNPubstar';
 import Pubstar from 'rtn-pubstar/js/Pubstar';
 
@@ -22,11 +27,9 @@ async function initRTNPubstar() {
 initRTNPubstar();
 
 const App = () => {
-  const [result, setResult] = useState<number | null>(null);
-
-  async function onButtonClick() {
+  async function onButtonClick(adId: string) {
     Pubstar.loadAndShowAd(
-      '1233/99228313584',
+      adId,
       {
         onError: errorCode => {
           console.error('Ad load error:', errorCode);
@@ -36,7 +39,7 @@ const App = () => {
         },
       },
       {
-        onAdHide: (reward) => {
+        onAdHide: reward => {
           console.log('Ad hidden', reward);
         },
         onAdShowed: () => {
@@ -47,21 +50,42 @@ const App = () => {
         },
       },
     );
-
-    const value = await RTNPubstar?.add(3, 7);
-    console.log('Result:', value);
-    setResult(value ?? null);
   }
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle={'dark-content'} />
-      <Text style={{ marginLeft: 20, marginTop: 20 }}>
-        3+7={result ?? '??'}
-      </Text>
-      <Button title="Compute" onPress={onButtonClick} />
+
+      <View style={styles.container}>
+        <Button
+          title="Show Interstitial Ad"
+          onPress={() => onButtonClick('1233/99228313582')}
+        />
+        <Button
+          title="Show Open Ad"
+          onPress={() => onButtonClick('1233/99228313583')}
+        />
+        <Button
+          title="Show Reward Ad"
+          onPress={() => onButtonClick('1233/99228313584')}
+        />
+      </View>
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+    gap: 16,
+  },
+});
 
 export default App;
