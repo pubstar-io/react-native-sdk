@@ -17,6 +17,8 @@ class PubstarModule(reactContext: ReactApplicationContext) : NativeRTNPubstarSpe
   }
 
   override fun init(promise: Promise) {
+    Log.d("PubStar", "SDK running init!")
+
     PubStarAdManager.getInstance()
       .setInitAdListener(object : InitAdListener {
           override fun onDone() {
@@ -24,11 +26,12 @@ class PubstarModule(reactContext: ReactApplicationContext) : NativeRTNPubstarSpe
               promise.resolve(null)
           }
 
-          override fun onError(error: ErrorCode) {
-              Log.e("PubStar", "SDK initialization error: $error")
-              promise.reject("INIT_FAILED", error.name)
+          override fun onError(code: ErrorCode) {
+              Log.d("PubStar", "SDK initialization error: $code")
+              promise.reject("INIT_FAILED", code.name)
           }
       })
+      .init(reactApplicationContext)
   }
 
   companion object {

@@ -5,6 +5,7 @@ buildscript {
   repositories {
     google()
     gradlePluginPortal()
+    maven { url = uri("https://artifactory.appodeal.com/appodeal") } 
   }
   dependencies {
     classpath("com.android.tools.build:gradle:7.3.1")
@@ -24,8 +25,11 @@ android {
 repositories {
   mavenCentral()
   google()
+  maven { url = uri("https://artifactory.appodeal.com/appodeal") }
 }
 
 dependencies {
   implementation 'com.facebook.react:react-native'
+  implementation 'com.appodeal.ads:sdk:3.4.2.0'
+  implementation 'io.pubstar.mobile:ads:1.1.8'
 }

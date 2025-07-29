@@ -111,6 +111,10 @@ dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
 
+    // The dependencies for Pubstar SDK
+    implementation("com.appodeal.ads:sdk:3.4.2.0")
+    implementation("com.mbridge.msdk.oversea:mbridge_android_sdk:16.8.81")
+
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {

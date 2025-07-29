@@ -10,12 +10,20 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        maven { url = uri("https://artifactory.appodeal.com/appodeal") }
     }
     dependencies {
         classpath("com.android.tools.build:gradle")
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+    }
+}
+
+// Add this code for Pubstar
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://artifactory.appodeal.com/appodeal' }
     }
 }
 
