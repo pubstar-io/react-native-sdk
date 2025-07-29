@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup"> <!-- <==== Add this line for Pubstar SDK       -->
         <activity
             android:name=".MainActivity"
@@ -24,5 +25,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="io.pubstar.key"
+            android:value="pub-app-id-1233" />
     </application>
 </manifest>

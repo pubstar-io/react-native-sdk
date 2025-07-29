@@ -4,23 +4,34 @@
  *
  * @format
  */
-import React from 'react';
-import { useState } from 'react';
+import React, { use } from 'react';
+import { useState, useEffect } from 'react';
 import { SafeAreaView, StatusBar, Text, Button } from 'react-native';
-import RTNCalculator from 'rtn-pubstar/js/NativeRTNPubstar';
+import RTNPubstar from 'rtn-pubstar/js/NativeRTNPubstar';
+
+async function initRTNPubstar() {
+  try {
+    await RTNPubstar?.init();
+    console.log('RTNPubstar initialized');
+  } catch (error) {
+    console.error('Error initializing RTNPubstar:', error);
+  }
+}
+
+
+initRTNPubstar();
 
 const App = () => {
   const [result, setResult] = useState<number | null>(null);
 
-  async function handleButtonClick() {
-    try {
-      const result = await RTNCalculator?.init();
-      console.log('RTNCalculator initialized', result);
-    } catch (error) {
-      console.error('Error initializing RTNCalculator:', error);
-    }
+  // useEffect(() => {
+  //   initRTNPubstar();
+  // }, []);
 
-    const value = await RTNCalculator?.add(3, 7);
+  async function onButtonClick() {
+    RTNPubstar?.loadAndShow('1233/99228313584');
+    
+    const value = await RTNPubstar?.add(3, 7);
     console.log('Result:', value);
     setResult(value ?? null);
   }
@@ -31,8 +42,9 @@ const App = () => {
       <Text style={{ marginLeft: 20, marginTop: 20 }}>
         3+7={result ?? '??'}
       </Text>
-      <Button title="Compute" onPress={handleButtonClick} />
+      <Button title="Compute" onPress={onButtonClick} />
     </SafeAreaView>
   );
 };
+
 export default App;
