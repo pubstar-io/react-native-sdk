@@ -1,8 +1,10 @@
 package io.rtnpubstar
 
 import android.util.Log
+import com.facebook.react.bridge.Callback
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.ReadableMap
 import io.pubstar.NativeRTNPubstarSpec
 import io.pubstar.mobile.ads.interfaces.AdLoaderListener
 import io.pubstar.mobile.ads.interfaces.AdShowedListener
@@ -39,8 +41,14 @@ class PubstarModule(reactContext: ReactApplicationContext) : NativeRTNPubstarSpe
       .init(reactApplicationContext)
   }
 
-
-  override fun loadAndShow(adId: String, promise: Promise) {
+  override fun loadAndShow(
+      adId: String,
+      onLoadError: Callback,
+      onLoaded: Callback,
+      onAdHide: Callback,
+      onAdShowed: Callback,
+      onShowError: Callback
+  ) {
       pubStarAdController.loadAndShow(
           reactApplicationContext,
           adId,
@@ -48,23 +56,28 @@ class PubstarModule(reactContext: ReactApplicationContext) : NativeRTNPubstarSpe
           object : AdLoaderListener {
               override fun onError(code: ErrorCode) {
                   Log.d("Pubstar", "Loaded error")
+                  onLoadError.invoke(code.name)
               }
 
               override fun onLoaded() {
                   Log.d("Pubstar", "Loaded success")
+                  onLoaded.invoke("onLoaded")
               }
           },
           object : AdShowedListener {
               override fun onAdHide(any: RewardModel?) {
                   Log.d("Pubstar", "Ad be hide")
+                  onAdHide.invoke()
               }
 
               override fun onAdShowed() {
                   Log.d("Pubstar", "Ad showed")
+                  onAdShowed.invoke()
               }
 
               override fun onError(code: ErrorCode) {
                   Log.d("Pubstar", "Ad showe error")
+                  onShowError.invoke(code.name)
               }
           }
       )
