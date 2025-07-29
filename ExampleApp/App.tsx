@@ -36,8 +36,8 @@ const App = () => {
         },
       },
       {
-        onAdHide: () => {
-          console.log('Ad hidden');
+        onAdHide: (reward) => {
+          console.log('Ad hidden', reward);
         },
         onAdShowed: () => {
           console.log('Ad showed');

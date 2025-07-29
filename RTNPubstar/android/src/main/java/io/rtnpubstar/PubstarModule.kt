@@ -1,10 +1,12 @@
 package io.rtnpubstar
 
 import android.util.Log
+import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Callback
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableMap
+import com.facebook.react.bridge.WritableMap
 import io.pubstar.NativeRTNPubstarSpec
 import io.pubstar.mobile.ads.interfaces.AdLoaderListener
 import io.pubstar.mobile.ads.interfaces.AdShowedListener
@@ -13,6 +15,18 @@ import io.pubstar.mobile.ads.interfaces.PubStarAdController
 import io.pubstar.mobile.ads.model.ErrorCode
 import io.pubstar.mobile.ads.model.RewardModel
 import io.pubstar.mobile.ads.pub.PubStarAdManager
+
+fun rewardModelToWritableMap(reward: RewardModel?): WritableMap {
+    val map = Arguments.createMap()
+    if (reward != null) {
+        map.putString("type", reward.type)
+        map.putInt("amount", reward.amount)
+    } else {
+        map.putString("type", "")
+        map.putInt("amount", 0)
+    }
+    return map
+}
 
 class PubstarModule(reactContext: ReactApplicationContext) : NativeRTNPubstarSpec(reactContext) {
     private val pubStarAdController: PubStarAdController by lazy {
@@ -55,28 +69,24 @@ class PubstarModule(reactContext: ReactApplicationContext) : NativeRTNPubstarSpe
           null,
           object : AdLoaderListener {
               override fun onError(code: ErrorCode) {
-                  Log.d("Pubstar", "Loaded error")
                   onLoadError.invoke(code.name)
               }
 
               override fun onLoaded() {
-                  Log.d("Pubstar", "Loaded success")
                   onLoaded.invoke("onLoaded")
               }
           },
           object : AdShowedListener {
               override fun onAdHide(any: RewardModel?) {
-                  Log.d("Pubstar", "Ad be hide")
-                  onAdHide.invoke()
+                  val rewardMap = rewardModelToWritableMap(any)
+                  onAdHide.invoke(rewardMap)
               }
 
               override fun onAdShowed() {
-                  Log.d("Pubstar", "Ad showed")
                   onAdShowed.invoke()
               }
 
               override fun onError(code: ErrorCode) {
-                  Log.d("Pubstar", "Ad showe error")
                   onShowError.invoke(code.name)
               }
           }

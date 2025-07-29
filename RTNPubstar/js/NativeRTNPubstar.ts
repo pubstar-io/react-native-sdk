@@ -1,23 +1,20 @@
 import { TurboModule, TurboModuleRegistry } from "react-native";
 
-export enum EventName {
-  AD_LOAD_ERROR = "onLoadError",
-  AD_LOADED = "adLoaded",
-  AD_HIDE = "onAdHide",
-  AD_SHOWED = "onAdShowed",
-  AD_SHOW_ERROR = "onShowError",
+export interface RewardModel {
+  amount: number;
+  type: string;
 }
 
 export interface Spec extends TurboModule {
   add(a: number, b: number): Promise<number>;
   init(): Promise<void>;
   loadAndShow(
-    adId: string, 
+    adId: string,
     onLoadError: (errorCode: string) => void,
     onLoaded: () => void,
-    onAdHide: () => void,
+    onAdHide: (reward: RewardModel | undefined) => void,
     onAdShowed: () => void,
-    onError: (errorCode: string) => void,
+    onError: (errorCode: string) => void
   ): void;
 }
 
