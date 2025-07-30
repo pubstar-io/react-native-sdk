@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import RTNPubstar from 'rtn-pubstar/js/NativeRTNPubstar';
 import Pubstar from 'rtn-pubstar/js/Pubstar';
+import PubstarAdView from 'rtn-pubstar/js/PubstarAdView';
 
 async function initRTNPubstar() {
   try {
@@ -57,6 +58,10 @@ const App = () => {
       <StatusBar barStyle={'dark-content'} />
 
       <View style={styles.container}>
+        <PubstarAdView
+          adId="banner-123"
+          style={{ height: 100, width: '100%', backgroundColor: 'green' }}
+        />
         <Button
           title="Show Interstitial Ad"
           onPress={() => onButtonClick('1233/99228313582')}

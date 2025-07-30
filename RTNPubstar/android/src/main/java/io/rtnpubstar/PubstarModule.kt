@@ -5,7 +5,6 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Callback
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.WritableMap
 import io.pubstar.NativeRTNPubstarSpec
 import io.pubstar.mobile.ads.interfaces.AdLoaderListener
