@@ -72,6 +72,12 @@ const App = () => {
           size="small"
           type="banner"
         />
+        <PubstarAdView
+          adId="1233/99228313581"
+          style={{ width: 400, height: height, backgroundColor: 'lightgray' }}
+          size="small"
+          type="native"
+        />
         <Button
           title="Show Interstitial Ad"
           onPress={() => onButtonClick('1233/99228313582')}
