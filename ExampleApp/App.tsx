@@ -4,7 +4,7 @@
  *
  * @format
  */
-import React from 'react';
+import React, { use, useEffect, useState } from 'react';
 import {
   SafeAreaView,
   StatusBar,
@@ -28,6 +28,14 @@ async function initRTNPubstar() {
 initRTNPubstar();
 
 const App = () => {
+  const [height, setHeight] = useState(100);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setHeight(101);
+    }, 2000);
+  }, []);
+
   async function onButtonClick(adId: string) {
     Pubstar.loadAndShowAd(
       adId,
@@ -59,8 +67,8 @@ const App = () => {
 
       <View style={styles.container}>
         <PubstarAdView
-          adId="banner-123"
-          style={{ height: 100, width: '100%', backgroundColor: 'green' }}
+          adId="1233/99228313580"
+          style={{ width: 400, height: height, backgroundColor: 'lightgray' }}
         />
         <Button
           title="Show Interstitial Ad"
