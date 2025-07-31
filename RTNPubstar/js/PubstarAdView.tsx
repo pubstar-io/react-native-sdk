@@ -1,6 +1,12 @@
 import React from 'react';
+import { StyleProp, ViewStyle } from 'react-native';
 import PubstarAdViewNativeComponent from './PubstarAdViewNativeComponent';
 
-export default function PubstarAdView(props) {
+interface Props {
+  adId: string;
+  style: StyleProp<ViewStyle>;
+}
+
+export default function PubstarAdView(props: Props) {
   return <PubstarAdViewNativeComponent {...props} />;
 }
