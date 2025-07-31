@@ -20,7 +20,12 @@ import io.pubstar.mobile.ads.model.ErrorCode
 import io.pubstar.mobile.ads.model.RewardModel
 import io.pubstar.mobile.ads.pub.PubStarAdManager
 
-data class AdProps(var adId: String? = null, var size: String? = null, var isRendered: Boolean = false)
+data class AdProps(
+    var adId: String? = null,
+    var size: String? = null,
+    var type: String? = null,
+    var isRendered: Boolean = false
+)
 
 @ReactModule(name = PubstarAdViewManager.NAME)
 class PubstarAdViewManager() :
@@ -57,7 +62,7 @@ class PubstarAdViewManager() :
     private fun onlyLoadAndShowAdWhenAllPropsSet(view: FrameLayout) {
         val props = viewPropsMap[view] ?: return
 
-        if (!props.adId.isNullOrEmpty() && !props.size.isNullOrEmpty() && !props.isRendered) {
+        if (!props.adId.isNullOrEmpty() && !props.size.isNullOrEmpty() && !props.type.isNullOrEmpty() && !props.isRendered) {
             updateProps(view) {
                 isRendered = true
             }
@@ -66,7 +71,8 @@ class PubstarAdViewManager() :
                 view.context,
                 view,
                 props.adId as String,
-                props.size
+                props.size,
+                props.type
             )
         }
     }
@@ -106,7 +112,30 @@ class PubstarAdViewManager() :
         }
     }
 
-    private fun loadAndShowWhenReady(context: Context, view: ViewGroup, adId: String, size: String?) {
+    @ReactProp(name = "type")
+    override fun setType(view: FrameLayout, value: String?) {
+        if (value.isNullOrEmpty()) {
+            return
+        }
+
+        updateProps(view) {
+            type = value
+        }
+
+        view.post {
+            onlyLoadAndShowAdWhenAllPropsSet(view)
+        }
+
+        Log.d("PubstarAdViewManager", "set Type")
+    }
+
+    private fun loadAndShowWhenReady(
+        context: Context,
+        view: ViewGroup,
+        adId: String,
+        size: String?,
+        type: String?
+    ) {
         val adNetShowListener = object : AdShowedListener {
             override fun onAdShowed() {
                 Log.d("PubstarAdViewManager", "ad showed")
