@@ -69,6 +69,7 @@ const App = () => {
         <PubstarAdView
           adId="1233/99228313580"
           style={{ width: 400, height: height, backgroundColor: 'lightgray' }}
+          size="small"
         />
         <Button
           title="Show Interstitial Ad"

@@ -2,6 +2,7 @@ package io.rtnpubstar
 
 import android.content.Context
 import android.util.Log
+import android.view.View
 import android.widget.FrameLayout
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.SimpleViewManager
@@ -18,10 +19,19 @@ import io.pubstar.mobile.ads.model.ErrorCode
 import io.pubstar.mobile.ads.model.RewardModel
 import io.pubstar.mobile.ads.pub.PubStarAdManager
 
+data class AdProps(var adId: String? = null, var size: String? = null, var isRendered: Boolean = false)
+
 @ReactModule(name = PubstarAdViewManager.NAME)
 class PubstarAdViewManager() :
     SimpleViewManager<FrameLayout>(),
     PubstarAdViewManagerInterface<FrameLayout> {
+
+    private val viewPropsMap = mutableMapOf<View, AdProps>()
+
+    private inline fun updateProps(view: View, block: AdProps.() -> Unit) {
+        val props = viewPropsMap.getOrPut(view) { AdProps() }
+        props.block()
+    }
 
     companion object {
         const val NAME = "PubstarAdView"
@@ -43,14 +53,50 @@ class PubstarAdViewManager() :
         return FrameLayout(reactContext)
     }
 
-    @ReactProp(name = "adId")
-    override fun setAdId(view: FrameLayout, value: String?) {
-        if(value.isNullOrEmpty()) {
+    private fun onlyLoadAndShowAdWhenAllPropsSet(view: FrameLayout) {
+        val props = viewPropsMap[view] ?: return
+
+        if (!props.adId.isNullOrEmpty() && !props.size.isNullOrEmpty() && !props.isRendered) {
+            updateProps(view) {
+                isRendered = true
+            }
+
+            loadAndShowWhenReady(props.adId!!, view.context, view)
+        }
+    }
+
+    @ReactProp(name = "size")
+    override fun setSize(view: FrameLayout?, value: String?) {
+        if (view == null || value.isNullOrEmpty()) {
             return
         }
 
+        updateProps(view) {
+            size = value
+        }
+
         view.post {
-            loadAndShowWhenReady(value, view.context, view)
+            onlyLoadAndShowAdWhenAllPropsSet(view)
+        }
+
+        Log.d("PubstarAdViewManager", "set Size")
+    }
+
+    @ReactProp(name = "adId")
+    override fun setAdId(view: FrameLayout, value: String?) {
+        if (value.isNullOrEmpty()) {
+            return
+        }
+
+        updateProps(view) {
+            adId = value
+        }
+
+        Log.d("PubstarAdViewManager", "set adId")
+
+
+        view.post {
+            onlyLoadAndShowAdWhenAllPropsSet(view)
         }
     }
 
@@ -83,7 +129,7 @@ class PubstarAdViewManager() :
         val requestBanner = BannerAdRequest.Builder(context)
             .withView(view)
             .adLoaderListener(adNetLoaderListener)
-            .tag(BannerAdRequest.AdTag.Medium)
+            .tag(BannerAdRequest.AdTag.Small)
             .adShowedListener(adNetShowListener)
             .build()
 

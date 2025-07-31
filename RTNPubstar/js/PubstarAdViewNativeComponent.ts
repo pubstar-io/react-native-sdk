@@ -3,6 +3,7 @@ import { codegenNativeComponent } from "react-native/Libraries/Utilities/codegen
 
 export interface NativeProps extends ViewProps {
   adId?: string;
+  size?: string;
 }
 
 export default codegenNativeComponent<NativeProps>("PubstarAdView");
