@@ -12,6 +12,7 @@ import com.facebook.react.viewmanagers.PubstarAdViewManagerDelegate
 import com.facebook.react.viewmanagers.PubstarAdViewManagerInterface
 import android.view.ViewGroup
 import io.pubstar.mobile.ads.base.BannerAdRequest
+import io.pubstar.mobile.ads.base.NativeAdRequest
 import io.pubstar.mobile.ads.interfaces.AdLoaderListener
 import io.pubstar.mobile.ads.interfaces.AdShowedListener
 import io.pubstar.mobile.ads.interfaces.PubStarAdController
@@ -61,7 +62,12 @@ class PubstarAdViewManager() :
                 isRendered = true
             }
 
-            loadAndShowWhenReady(props.adId!!, view.context, view)
+            loadAndShowWhenReady(
+                view.context,
+                view,
+                props.adId as String,
+                props.size
+            )
         }
     }
 
@@ -100,7 +106,7 @@ class PubstarAdViewManager() :
         }
     }
 
-    private fun loadAndShowWhenReady(adId: String, context: Context, view: ViewGroup) {
+    private fun loadAndShowWhenReady(context: Context, view: ViewGroup, adId: String, size: String?) {
         val adNetShowListener = object : AdShowedListener {
             override fun onAdShowed() {
                 Log.d("PubstarAdViewManager", "ad showed")
@@ -133,6 +139,13 @@ class PubstarAdViewManager() :
             .adShowedListener(adNetShowListener)
             .build()
 
-        pubStarAdController.loadAndShow(adId, requestBanner)
+        val requestNative = NativeAdRequest.Builder(context)
+            .sizeType(NativeAdRequest.Type.Small)
+            .withView(view)
+            .adLoaderListener(adNetLoaderListener)
+            .adShowedListener(adNetShowListener)
+            .build()
+
+        pubStarAdController.loadAndShow(adId, requestNative)
     }
 }
