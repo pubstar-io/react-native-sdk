@@ -25,7 +25,46 @@ data class AdProps(
     var size: String? = null,
     var type: String? = null,
     var isRendered: Boolean = false
-)
+) {
+    fun getBannerSize(): BannerAdRequest.AdTag {
+        when(this.size) {
+            "small" -> {
+                return BannerAdRequest.AdTag.Small
+            }
+            "medium" -> {
+                return BannerAdRequest.AdTag.Medium
+            }
+            "large" -> {
+                return BannerAdRequest.AdTag.Big
+            }
+        }
+
+        return BannerAdRequest.AdTag.Small
+    }
+
+    fun getNativeSize(): NativeAdRequest.Type {
+        when(this.size) {
+            "small" -> {
+                return NativeAdRequest.Type.Small
+            }
+            "medium" -> {
+                return NativeAdRequest.Type.Medium
+            }
+            "large" -> {
+                return NativeAdRequest.Type.Big
+            }
+        }
+
+        return NativeAdRequest.Type.Small
+    }
+
+    fun reset() {
+        adId = null
+        size = null
+        type = null
+        isRendered = false
+    }
+}
 
 @ReactModule(name = PubstarAdViewManager.NAME)
 class PubstarAdViewManager() :
@@ -34,9 +73,8 @@ class PubstarAdViewManager() :
 
     private val viewPropsMap = mutableMapOf<View, AdProps>()
 
-    private inline fun updateProps(view: View, block: AdProps.() -> Unit) {
-        val props = viewPropsMap.getOrPut(view) { AdProps() }
-        props.block()
+    private fun props(view: View): AdProps {
+        return viewPropsMap.getOrPut(view) { AdProps() }
     }
 
     companion object {
@@ -63,16 +101,12 @@ class PubstarAdViewManager() :
         val props = viewPropsMap[view] ?: return
 
         if (!props.adId.isNullOrEmpty() && !props.size.isNullOrEmpty() && !props.type.isNullOrEmpty() && !props.isRendered) {
-            updateProps(view) {
-                isRendered = true
-            }
+            props.isRendered = true
 
             loadAndShowWhenReady(
                 view.context,
                 view,
-                props.adId as String,
-                props.size,
-                props.type
+                props
             )
         }
     }
@@ -83,15 +117,13 @@ class PubstarAdViewManager() :
             return
         }
 
-        updateProps(view) {
-            size = value
-        }
+        props(view).size = value
 
         view.post {
             onlyLoadAndShowAdWhenAllPropsSet(view)
         }
 
-        Log.d("PubstarAdViewManager", "set Size")
+        Log.d("PubstarAdViewManager", "set Size: $value")
     }
 
     @ReactProp(name = "adId")
@@ -100,11 +132,9 @@ class PubstarAdViewManager() :
             return
         }
 
-        updateProps(view) {
-            adId = value
-        }
+        props(view).adId = value
 
-        Log.d("PubstarAdViewManager", "set adId")
+        Log.d("PubstarAdViewManager", "set adId: $value")
 
 
         view.post {
@@ -118,23 +148,19 @@ class PubstarAdViewManager() :
             return
         }
 
-        updateProps(view) {
-            type = value
-        }
+        props(view).type = value
 
         view.post {
             onlyLoadAndShowAdWhenAllPropsSet(view)
         }
 
-        Log.d("PubstarAdViewManager", "set Type")
+        Log.d("PubstarAdViewManager", "set Type: $value")
     }
 
     private fun loadAndShowWhenReady(
         context: Context,
         view: ViewGroup,
-        adId: String,
-        size: String?,
-        type: String?
+        data: AdProps
     ) {
         val adNetShowListener = object : AdShowedListener {
             override fun onAdShowed() {
@@ -161,20 +187,24 @@ class PubstarAdViewManager() :
             }
         }
 
-        val requestBanner = BannerAdRequest.Builder(context)
-            .withView(view)
-            .adLoaderListener(adNetLoaderListener)
-            .tag(BannerAdRequest.AdTag.Small)
-            .adShowedListener(adNetShowListener)
-            .build()
+        if (data.type == "banner") {
+            val requestBanner = BannerAdRequest.Builder(context)
+                .withView(view)
+                .adLoaderListener(adNetLoaderListener)
+                .tag(data.getBannerSize())
+                .adShowedListener(adNetShowListener)
+                .build()
 
-        val requestNative = NativeAdRequest.Builder(context)
-            .sizeType(NativeAdRequest.Type.Small)
-            .withView(view)
-            .adLoaderListener(adNetLoaderListener)
-            .adShowedListener(adNetShowListener)
-            .build()
+            pubStarAdController.loadAndShow(data.adId, requestBanner)
+        } else if (data.type == "native") {
+            val requestNative = NativeAdRequest.Builder(context)
+                .sizeType(data.getNativeSize())
+                .withView(view)
+                .adLoaderListener(adNetLoaderListener)
+                .adShowedListener(adNetShowListener)
+                .build()
 
-        pubStarAdController.loadAndShow(adId, requestNative)
+            pubStarAdController.loadAndShow(data.adId, requestNative)
+        }
     }
 }
