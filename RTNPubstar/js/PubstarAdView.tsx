@@ -1,4 +1,4 @@
-import React from "react";
+import React, {  useMemo } from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import PubstarAdViewNativeComponent from "./PubstarAdViewNativeComponent";
 
@@ -15,12 +15,36 @@ export default function PubstarAdView({
   style,
   type,
 }: Props) {
+  const formatSize = useMemo(() => {
+    switch (size) {
+      case "small":
+        return "small";
+      case "medium":
+        return "medium";
+      case "large":
+        return "large";
+      default:
+        return "small";
+    }
+  }, [size]);
+
+  const formatType = useMemo(() => {
+    switch (type) {
+      case "banner":
+        return "banner";
+      case "native":
+        return "native";
+      default:
+        return "banner";
+    }
+  }, [type]);
+
   return (
     <PubstarAdViewNativeComponent
       adId={adId}
-      size={size}
+      size={formatSize}
       style={style}
-      type={type}
+      type={formatType}
     />
   );
 }
