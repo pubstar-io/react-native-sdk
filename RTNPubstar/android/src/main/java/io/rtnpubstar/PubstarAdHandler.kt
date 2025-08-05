@@ -25,7 +25,14 @@ class PubstarAdHandler {
         PubStarAdManager.getAdController()
     }
 
-    fun onlyLoadAndShowAdWhenAllPropsSet(view: FrameLayout, onLoaded: () -> Unit) {
+    fun onlyLoadAndShowAdWhenAllPropsSet(
+        view: FrameLayout,
+        onLoaded: () -> Unit,
+        onLoadedError: (ErrorCode) -> Unit,
+        onShowed: () -> Unit,
+        onHide: (RewardModel?) -> Unit,
+        onShowedError: (ErrorCode) -> Unit
+    ) {
         val props = viewPropsMap[view] ?: return
 
         if (
@@ -45,15 +52,19 @@ class PubstarAdHandler {
                 },
                 onLoadedError = { errorCode ->
                     Log.e("PubstarAdViewManager", "callback onAdLoadedError: ${errorCode.name}")
+                    onLoadedError(errorCode)
                 },
                 onShowed = {
                     Log.d("PubstarAdViewManager", "callback when ad Showed")
+                    onShowed()
                 },
                 onHide = { reward ->
                     Log.d("PubstarAdViewManager", "callback onAdHide: ${reward?.type}")
+                    onHide(reward)
                 },
                 onShowedError = { errorCode ->
                     Log.e("PubstarAdViewManager", "ad load error: ${errorCode.name}")
+                    onShowedError(errorCode)
                 }
             )
         }

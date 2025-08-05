@@ -92,6 +92,18 @@ class PubstarAdViewManager() :
                 view = view,
                 onLoaded = {
                     sendOnLoadedEvent(view)
+                },
+                onLoadedError = {
+
+                },
+                onShowed = {
+
+                },
+                onHide = { reward ->
+
+                },
+                onShowedError = { errorCode ->
+
                 }
             )
         }
@@ -110,6 +122,18 @@ class PubstarAdViewManager() :
                 view = view,
                 onLoaded = {
                     sendOnLoadedEvent(view)
+                },
+                onLoadedError = {
+
+                },
+                onShowed = {
+
+                },
+                onHide = { reward ->
+
+                },
+                onShowedError = { errorCode ->
+
                 }
             )
         }
@@ -128,6 +152,18 @@ class PubstarAdViewManager() :
                 view = view,
                 onLoaded = {
                     sendOnLoadedEvent(view)
+                },
+                onLoadedError = {
+
+                },
+                onShowed = {
+
+                },
+                onHide = { reward ->
+
+                },
+                onShowedError = { errorCode ->
+
                 }
             )
         }
