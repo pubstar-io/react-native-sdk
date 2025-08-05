@@ -13,6 +13,10 @@ export interface NativeProps extends ViewProps {
   size?: string;
   onAdRendered?: DirectEventHandler<AdRenderedEvent>;
   onLoaded?: DirectEventHandler<AdLoadedEvent>;
+  onLoadedError?: DirectEventHandler<AdLoadedEvent>;
+  onShowed?: DirectEventHandler<AdLoadedEvent>;
+  onHide?: DirectEventHandler<AdLoadedEvent>;
+  onShowedError?: DirectEventHandler<AdLoadedEvent>;
 }
 
 export default codegenNativeComponent<NativeProps>("PubstarAdView");

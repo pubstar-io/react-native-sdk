@@ -9,6 +9,10 @@ interface Props {
   type: "banner" | "native";
   onAdRendered?: () => void;
   onLoaded?: () => void;
+  onLoadedError?: () => void;
+  onShowed?: () => void;
+  onHide?: () => void;
+  onShowedError?: () => void;
 }
 
 export default function PubstarAdView({
@@ -17,7 +21,11 @@ export default function PubstarAdView({
   style,
   type,
   onAdRendered,
-  onLoaded
+  onLoaded,
+  onLoadedError,
+  onShowed,
+  onHide,
+  onShowedError,
 }: Props) {
   const formatSize = useMemo(() => {
     switch (size) {
@@ -51,6 +59,10 @@ export default function PubstarAdView({
       type={formatType}
       onAdRendered={onAdRendered}
       onLoaded={onLoaded}
+      onLoadedError={onLoadedError}
+      onShowed={onShowed}
+      onHide={onHide}
+      onShowedError={onShowedError}
     />
   );
 }

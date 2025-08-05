@@ -3,30 +3,30 @@ package io.rtnpubstar
 import com.facebook.react.uimanager.events.Event
 import com.facebook.react.uimanager.events.RCTModernEventEmitter
 
-class AdRenderedEvent(
+class AdLoadedEvent(
     surfaceId: Int,
-     viewTag: Int
-) : Event<AdRenderedEvent>(surfaceId, viewTag) {
-
-    override fun getEventName(): String = "onAdRendered"
+    viewTag: Int
+) : Event<AdLoadedEvent>(surfaceId, viewTag) {
+    override fun getEventName(): String = "onLoaded"
 
     override fun canCoalesce(): Boolean = false
 
     override fun dispatchModern(rctEventEmitter: RCTModernEventEmitter) {
         rctEventEmitter.receiveEvent(
-            surfaceId, 
-            viewTag, 
+            surfaceId,
+            viewTag,
             eventName,
             null
         )
     }
 }
 
-class AdLoadedEvent(
+class AdEvent(
+    private val name: String,
     surfaceId: Int,
-    viewTag: Int
+    viewTag: Int,
 ) : Event<AdLoadedEvent>(surfaceId, viewTag) {
-    override fun getEventName(): String = "onLoaded"
+    override fun getEventName(): String = this.name
 
     override fun canCoalesce(): Boolean = false
 

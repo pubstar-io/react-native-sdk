@@ -1,7 +1,5 @@
 package io.rtnpubstar
 
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.widget.FrameLayout
 import com.facebook.react.module.annotations.ReactModule
@@ -34,29 +32,8 @@ class PubstarAdViewManager() :
     override fun createViewInstance(reactContext: ThemedReactContext): FrameLayout {
         val view = FrameLayout(reactContext)
 
-        Handler(Looper.getMainLooper()).postDelayed({
-            sendOnAdRenderedEvent(view)
-        }, 1000)
-
         return view
     }
-
-    private fun sendOnAdRenderedEvent(view: View) {
-        val reactContext = (view.context as? ReactContext) ?: return
-        val eventDispatcher = UIManagerHelper.getEventDispatcherForReactTag(
-            reactContext,
-            view.id
-        )
-        val surfaceId = UIManagerHelper.getSurfaceId(view)
-
-        eventDispatcher?.dispatchEvent(
-            AdRenderedEvent(
-                surfaceId = surfaceId,
-                viewTag = view.id
-            )
-        )
-    }
-
 
     private fun sendOnLoadedEvent(view: View) {
         val reactContext = (view.context as? ReactContext) ?: return
@@ -74,9 +51,71 @@ class PubstarAdViewManager() :
         )
     }
 
-    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> {
-        return mutableMapOf(
-            "onAdRendered" to mapOf("registrationName" to "onAdRendered")
+    private fun setOnLoadedError(view: View) {
+        val reactContext = (view.context as? ReactContext) ?: return
+        val eventDispatcher = UIManagerHelper.getEventDispatcherForReactTag(
+            reactContext,
+            view.id
+        )
+        val surfaceId = UIManagerHelper.getSurfaceId(view)
+
+        eventDispatcher?.dispatchEvent(
+            AdEvent(
+                name = "onLoadedError",
+                surfaceId = surfaceId,
+                viewTag = view.id
+            )
+        )
+    }
+
+    private fun setOnHide(view: View) {
+        val reactContext = (view.context as? ReactContext) ?: return
+        val eventDispatcher = UIManagerHelper.getEventDispatcherForReactTag(
+            reactContext,
+            view.id
+        )
+        val surfaceId = UIManagerHelper.getSurfaceId(view)
+
+        eventDispatcher?.dispatchEvent(
+            AdEvent(
+                name = "onHide",
+                surfaceId = surfaceId,
+                viewTag = view.id
+            )
+        )
+    }
+
+    private fun setOnShowed(view: View) {
+        val reactContext = (view.context as? ReactContext) ?: return
+        val eventDispatcher = UIManagerHelper.getEventDispatcherForReactTag(
+            reactContext,
+            view.id
+        )
+        val surfaceId = UIManagerHelper.getSurfaceId(view)
+
+        eventDispatcher?.dispatchEvent(
+            AdEvent(
+                name = "onShowed",
+                surfaceId = surfaceId,
+                viewTag = view.id
+            )
+        )
+    }
+
+    private fun setOnShowedError(view: View) {
+        val reactContext = (view.context as? ReactContext) ?: return
+        val eventDispatcher = UIManagerHelper.getEventDispatcherForReactTag(
+            reactContext,
+            view.id
+        )
+        val surfaceId = UIManagerHelper.getSurfaceId(view)
+
+        eventDispatcher?.dispatchEvent(
+            AdEvent(
+                name = "onShowedError",
+                surfaceId = surfaceId,
+                viewTag = view.id
+            )
         )
     }
 
@@ -94,16 +133,16 @@ class PubstarAdViewManager() :
                     sendOnLoadedEvent(view)
                 },
                 onLoadedError = {
-
+                    setOnLoadedError(view)
                 },
                 onShowed = {
-
+                    setOnShowed(view)
                 },
                 onHide = { reward ->
-
+                    setOnHide(view)
                 },
                 onShowedError = { errorCode ->
-
+                    setOnShowedError(view)
                 }
             )
         }
@@ -124,16 +163,16 @@ class PubstarAdViewManager() :
                     sendOnLoadedEvent(view)
                 },
                 onLoadedError = {
-
+                    setOnLoadedError(view)
                 },
                 onShowed = {
-
+                    setOnShowed(view)
                 },
                 onHide = { reward ->
-
+                    setOnHide(view)
                 },
                 onShowedError = { errorCode ->
-
+                    setOnShowedError(view)
                 }
             )
         }
@@ -154,16 +193,16 @@ class PubstarAdViewManager() :
                     sendOnLoadedEvent(view)
                 },
                 onLoadedError = {
-
+                    setOnLoadedError(view)
                 },
                 onShowed = {
-
+                    setOnShowed(view)
                 },
                 onHide = { reward ->
-
+                    setOnHide(view)
                 },
                 onShowedError = { errorCode ->
-
+                    setOnShowedError(view)
                 }
             )
         }
