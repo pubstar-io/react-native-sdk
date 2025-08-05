@@ -1,18 +1,18 @@
 import React, { memo, useMemo } from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import PubstarAdViewNativeComponent from "./PubstarAdViewNativeComponent";
+import { RewardModel, ErrorCode } from "./NativeRTNPubstar"
 
 interface Props {
   adId: string;
   style: StyleProp<ViewStyle>;
   size?: "small" | "medium" | "large";
   type: "banner" | "native";
-  onAdRendered?: () => void;
   onLoaded?: () => void;
-  onLoadedError?: () => void;
+  onLoadedError?: (errorCode: ErrorCode) => void;
   onShowed?: () => void;
-  onHide?: () => void;
-  onShowedError?: () => void;
+  onHide?: (reward: RewardModel) => void;
+  onShowedError?: (errorCode: ErrorCode) => void;
 }
 
 const PubstarAdView = ({
@@ -20,7 +20,6 @@ const PubstarAdView = ({
   size = "small",
   style,
   type,
-  onAdRendered,
   onLoaded,
   onLoadedError,
   onShowed,
@@ -57,7 +56,6 @@ const PubstarAdView = ({
       size={formatSize}
       style={style}
       type={formatType}
-      onAdRendered={onAdRendered}
       onLoaded={onLoaded}
       onLoadedError={onLoadedError}
       onShowed={onShowed}

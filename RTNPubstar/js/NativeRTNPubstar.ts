@@ -5,16 +5,21 @@ export interface RewardModel {
   type: string;
 }
 
+export interface ErrorCode {
+  name: string;
+  code: number;
+}
+
 export interface Spec extends TurboModule {
   add(a: number, b: number): Promise<number>;
   init(): Promise<void>;
   loadAndShow(
     adId: string,
-    onLoadError: (errorCode: string) => void,
+    onLoadError: (errorCode: ErrorCode) => void,
     onLoaded: () => void,
     onAdHide: (reward: RewardModel | undefined) => void,
     onAdShowed: () => void,
-    onError: (errorCode: string) => void
+    onError: (errorCode: ErrorCode) => void
   ): void;
 }
 
