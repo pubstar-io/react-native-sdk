@@ -12,12 +12,28 @@ class AdRenderedEvent(
 
     override fun canCoalesce(): Boolean = false
 
-    override fun getCoalescingKey(): Short = 0
-
     override fun dispatchModern(rctEventEmitter: RCTModernEventEmitter) {
         rctEventEmitter.receiveEvent(
             surfaceId, 
             viewTag, 
+            eventName,
+            null
+        )
+    }
+}
+
+class AdLoadedEvent(
+    surfaceId: Int,
+    viewTag: Int
+) : Event<AdLoadedEvent>(surfaceId, viewTag) {
+    override fun getEventName(): String = "onLoaded"
+
+    override fun canCoalesce(): Boolean = false
+
+    override fun dispatchModern(rctEventEmitter: RCTModernEventEmitter) {
+        rctEventEmitter.receiveEvent(
+            surfaceId,
+            viewTag,
             eventName,
             null
         )

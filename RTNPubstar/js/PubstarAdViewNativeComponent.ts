@@ -5,12 +5,14 @@ import type {
 } from 'react-native/Libraries/Types/CodegenTypes';
 
 type AdRenderedEvent = Readonly<{}>;
+type AdLoadedEvent = Readonly<{}>;
 
 export interface NativeProps extends ViewProps {
   adId: string;
   type: string;
   size?: string;
   onAdRendered?: DirectEventHandler<AdRenderedEvent>;
+  onLoaded?: DirectEventHandler<AdLoadedEvent>;
 }
 
 export default codegenNativeComponent<NativeProps>("PubstarAdView");

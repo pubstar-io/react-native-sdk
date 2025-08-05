@@ -57,6 +57,23 @@ class PubstarAdViewManager() :
         )
     }
 
+
+    private fun sendOnLoadedEvent(view: View) {
+        val reactContext = (view.context as? ReactContext) ?: return
+        val eventDispatcher = UIManagerHelper.getEventDispatcherForReactTag(
+            reactContext,
+            view.id
+        )
+        val surfaceId = UIManagerHelper.getSurfaceId(view)
+
+        eventDispatcher?.dispatchEvent(
+            AdLoadedEvent(
+                surfaceId = surfaceId,
+                viewTag = view.id
+            )
+        )
+    }
+
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> {
         return mutableMapOf(
             "onAdRendered" to mapOf("registrationName" to "onAdRendered")
@@ -71,7 +88,12 @@ class PubstarAdViewManager() :
 
         pubstarHandle.props(view).size = value
         view.post {
-            pubstarHandle.onlyLoadAndShowAdWhenAllPropsSet(view)
+            pubstarHandle.onlyLoadAndShowAdWhenAllPropsSet(
+                view = view,
+                onLoaded = {
+                    sendOnLoadedEvent(view)
+                }
+            )
         }
     }
 
@@ -84,7 +106,12 @@ class PubstarAdViewManager() :
 
         pubstarHandle.props(view).adId = value
         view.post {
-            pubstarHandle.onlyLoadAndShowAdWhenAllPropsSet(view)
+            pubstarHandle.onlyLoadAndShowAdWhenAllPropsSet(
+                view = view,
+                onLoaded = {
+                    sendOnLoadedEvent(view)
+                }
+            )
         }
     }
 
@@ -97,7 +124,12 @@ class PubstarAdViewManager() :
 
         pubstarHandle.props(view).type = value
         view.post {
-            pubstarHandle.onlyLoadAndShowAdWhenAllPropsSet(view)
+            pubstarHandle.onlyLoadAndShowAdWhenAllPropsSet(
+                view = view,
+                onLoaded = {
+                    sendOnLoadedEvent(view)
+                }
+            )
         }
     }
 }

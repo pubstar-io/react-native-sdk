@@ -8,6 +8,7 @@ interface Props {
   size?: "small" | "medium" | "large";
   type: "banner" | "native";
   onAdRendered?: () => void;
+  onLoaded?: () => void;
 }
 
 export default function PubstarAdView({
@@ -16,6 +17,7 @@ export default function PubstarAdView({
   style,
   type,
   onAdRendered,
+  onLoaded
 }: Props) {
   const formatSize = useMemo(() => {
     switch (size) {
@@ -48,6 +50,7 @@ export default function PubstarAdView({
       style={style}
       type={formatType}
       onAdRendered={onAdRendered}
+      onLoaded={onLoaded}
     />
   );
 }

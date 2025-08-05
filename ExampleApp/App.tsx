@@ -72,6 +72,7 @@ const App = () => {
           size="small"
           type="banner"
           onAdRendered={() => console.log('Banner ad rendered')}
+          onLoaded={() => console.log('Banner ad loaded')}
         />
         <PubstarAdView
           adId="1233/99228313581"
@@ -79,6 +80,7 @@ const App = () => {
           size="small"
           type="native"
           onAdRendered={() => console.log('Native ad rendered')}
+          onLoaded={() => console.log('Native ad loaded')}
         />
         <Button
           title="Show Interstitial Ad"

@@ -25,7 +25,7 @@ class PubstarAdHandler {
         PubStarAdManager.getAdController()
     }
 
-    fun onlyLoadAndShowAdWhenAllPropsSet(view: FrameLayout) {
+    fun onlyLoadAndShowAdWhenAllPropsSet(view: FrameLayout, onLoaded: () -> Unit) {
         val props = viewPropsMap[view] ?: return
 
         if (
@@ -41,6 +41,7 @@ class PubstarAdHandler {
                 props,
                 onLoaded = {
                     Log.d("PubstarAdViewManager", "callback when ad Loaded")
+                    onLoaded()
                 },
                 onLoadedError = { errorCode ->
                     Log.e("PubstarAdViewManager", "callback onAdLoadedError: ${errorCode.name}")
