@@ -44,7 +44,8 @@ class PubstarAdViewManager() :
         val surfaceId = UIManagerHelper.getSurfaceId(view)
 
         eventDispatcher?.dispatchEvent(
-            AdLoadedEvent(
+            AdEvent(
+                name = "onLoaded",
                 surfaceId = surfaceId,
                 viewTag = view.id
             )

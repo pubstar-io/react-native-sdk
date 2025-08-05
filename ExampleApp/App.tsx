@@ -4,7 +4,7 @@
  *
  * @format
  */
-import React, { use, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   SafeAreaView,
   StatusBar,
@@ -29,12 +29,6 @@ initRTNPubstar();
 
 const App = () => {
   const [height, setHeight] = useState(100);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setHeight(101);
-    }, 2000);
-  }, []);
 
   async function onButtonClick(adId: string) {
     Pubstar.loadAndShowAd(
@@ -68,19 +62,32 @@ const App = () => {
       <View style={styles.container}>
         <PubstarAdView
           adId="1233/99228313580"
-          style={{ width: '100%', height: height, backgroundColor: 'lightgray' }}
+          style={{
+            width: '100%',
+            height: height,
+            backgroundColor: 'lightgray',
+          }}
           size="small"
           type="banner"
           onAdRendered={() => console.log('Banner ad rendered')}
-          onLoaded={() => console.log('Banner ad loaded')}
+          onLoaded={() => {
+            console.log('Banner ad loaded');
+          }}
           onLoadedError={() => console.log('Banner ad load error')}
-          onShowed={() => console.log('Banner ad showed')}
+          onShowed={() => {
+            console.log('Banner ad showed');
+            setHeight(101);
+          }}
           onHide={() => console.log('Banner ad hidden')}
           onShowedError={() => console.log('Banner ad showed error')}
         />
         <PubstarAdView
           adId="1233/99228313581"
-          style={{ width: '100%', height: height, backgroundColor: 'lightgray' }}
+          style={{
+            width: '100%',
+            height: height,
+            backgroundColor: 'lightgray',
+          }}
           size="small"
           type="native"
           onAdRendered={() => console.log('Native ad rendered')}

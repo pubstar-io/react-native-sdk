@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { memo, useMemo } from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import PubstarAdViewNativeComponent from "./PubstarAdViewNativeComponent";
 
@@ -15,7 +15,7 @@ interface Props {
   onShowedError?: () => void;
 }
 
-export default function PubstarAdView({
+const PubstarAdView = ({
   adId,
   size = "small",
   style,
@@ -26,7 +26,7 @@ export default function PubstarAdView({
   onShowed,
   onHide,
   onShowedError,
-}: Props) {
+}: Props) => {
   const formatSize = useMemo(() => {
     switch (size) {
       case "small":
@@ -66,3 +66,5 @@ export default function PubstarAdView({
     />
   );
 }
+
+export default memo(PubstarAdView);
