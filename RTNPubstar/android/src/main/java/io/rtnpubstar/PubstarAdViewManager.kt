@@ -16,7 +16,7 @@ import android.view.ViewGroup
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.events.Event
-import com.facebook.react.uimanager.events.RCTEventEmitter
+import com.facebook.react.uimanager.events.RCTModernEventEmitter
 import io.pubstar.mobile.ads.base.BannerAdRequest
 import io.pubstar.mobile.ads.base.NativeAdRequest
 import io.pubstar.mobile.ads.interfaces.AdLoaderListener
@@ -217,8 +217,10 @@ class PubstarAdHelper {
 
 }
 
-class AdRenderedEvent(surfaceId: Int) :
-    Event<AdRenderedEvent>(surfaceId) {
+class AdRenderedEvent(
+    surfaceId: Int,
+     viewTag: Int
+) : Event<AdRenderedEvent>(surfaceId, viewTag) {
 
     override fun getEventName(): String = "onAdRendered"
 
@@ -226,8 +228,13 @@ class AdRenderedEvent(surfaceId: Int) :
 
     override fun getCoalescingKey(): Short = 0
 
-    override fun dispatch(rctEventEmitter: RCTEventEmitter) {
-        rctEventEmitter.receiveEvent(viewTag, eventName, null)
+    override fun dispatchModern(rctEventEmitter: RCTModernEventEmitter) {
+        rctEventEmitter.receiveEvent(
+            surfaceId, 
+            viewTag, 
+            eventName,
+            null
+        )
     }
 }
 
@@ -265,9 +272,13 @@ class PubstarAdViewManager() :
             reactContext,
             view.id
         )
+        val surfaceId = UIManagerHelper.getSurfaceId(view)
 
         eventDispatcher?.dispatchEvent(
-            AdRenderedEvent(view.id)
+            AdRenderedEvent(
+                surfaceId = surfaceId,
+                viewTag = view.id
+            )
         )
     }
 
