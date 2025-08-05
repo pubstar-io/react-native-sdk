@@ -1,6 +1,8 @@
 package io.rtnpubstar
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
@@ -11,6 +13,10 @@ import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.PubstarAdViewManagerDelegate
 import com.facebook.react.viewmanagers.PubstarAdViewManagerInterface
 import android.view.ViewGroup
+import com.facebook.react.bridge.ReactContext
+import com.facebook.react.uimanager.UIManagerHelper
+import com.facebook.react.uimanager.events.Event
+import com.facebook.react.uimanager.events.RCTEventEmitter
 import io.pubstar.mobile.ads.base.BannerAdRequest
 import io.pubstar.mobile.ads.base.NativeAdRequest
 import io.pubstar.mobile.ads.interfaces.AdLoaderListener
@@ -94,7 +100,22 @@ class PubstarAdHelper {
             loadAndShowWhenReady(
                 view.context,
                 view,
-                props
+                props,
+                onLoaded = {
+                    Log.d("PubstarAdViewManager", "callback when ad Loaded")
+                },
+                onLoadedError = { errorCode ->
+                    Log.e("PubstarAdViewManager", "callback onAdLoadedError: ${errorCode.name}")
+                },
+                onShowed = {
+                    Log.d("PubstarAdViewManager", "callback when ad Showed")
+                },
+                onHide = { reward ->
+                    Log.d("PubstarAdViewManager", "callback onAdHide: ${reward?.type}")
+                },
+                onShowedError = { errorCode ->
+                    Log.e("PubstarAdViewManager", "ad load error: ${errorCode.name}")
+                }
             )
         }
     }
@@ -102,30 +123,34 @@ class PubstarAdHelper {
     private fun loadAndShowWhenReady(
         context: Context,
         view: ViewGroup,
-        data: AdProps
+        data: AdProps,
+        onLoaded: () -> Unit,
+        onLoadedError: (ErrorCode) -> Unit,
+        onShowed: () -> Unit,
+        onHide: (RewardModel?) -> Unit,
+        onShowedError: (ErrorCode) -> Unit
     ) {
         val adNetShowListener = object : AdShowedListener {
             override fun onAdShowed() {
-                Log.d("PubstarAdViewManager", "ad showed")
+                onShowed()
             }
 
             override fun onAdHide(any: RewardModel?) {
-                Log.d("PubstarAdViewManager", "ad hidden")
+                onHide(any)
             }
 
             override fun onError(code: ErrorCode) {
-                Log.e("PubstarAdViewManager", "ad load error: ${code.name}")
+                onShowedError(code)
             }
-
         }
 
         val adNetLoaderListener = object : AdLoaderListener {
             override fun onLoaded() {
-                Log.d("PubstarAdViewManager", "ad loaded")
+                onLoaded()
             }
 
             override fun onError(code: ErrorCode) {
-                Log.e("PubstarAdViewManager", "ad load error: ${code.name}")
+                onLoadedError(code)
             }
         }
 
@@ -192,6 +217,20 @@ class PubstarAdHelper {
 
 }
 
+class AdRenderedEvent(surfaceId: Int) :
+    Event<AdRenderedEvent>(surfaceId) {
+
+    override fun getEventName(): String = "onAdRendered"
+
+    override fun canCoalesce(): Boolean = false
+
+    override fun getCoalescingKey(): Short = 0
+
+    override fun dispatch(rctEventEmitter: RCTEventEmitter) {
+        rctEventEmitter.receiveEvent(viewTag, eventName, null)
+    }
+}
+
 @ReactModule(name = PubstarAdViewManager.NAME)
 class PubstarAdViewManager() :
     SimpleViewManager<FrameLayout>(),
@@ -211,7 +250,31 @@ class PubstarAdViewManager() :
     override fun getName(): String = NAME
 
     override fun createViewInstance(reactContext: ThemedReactContext): FrameLayout {
-        return FrameLayout(reactContext)
+        val view = FrameLayout(reactContext)
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            sendOnAdRenderedEvent(view)
+        }, 1000)
+
+        return view
+    }
+
+    private fun sendOnAdRenderedEvent(view: View) {
+        val reactContext = (view.context as? ReactContext) ?: return
+        val eventDispatcher = UIManagerHelper.getEventDispatcherForReactTag(
+            reactContext,
+            view.id
+        )
+
+        eventDispatcher?.dispatchEvent(
+            AdRenderedEvent(view.id)
+        )
+    }
+
+    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any>? {
+        return mutableMapOf(
+            "onAdRendered" to mapOf("registrationName" to "onAdRendered")
+        )
     }
 
     @ReactProp(name = "size")
@@ -224,8 +287,6 @@ class PubstarAdViewManager() :
         view.post {
             helper.onlyLoadAndShowAdWhenAllPropsSet(view)
         }
-
-        Log.d("PubstarAdViewManager", "set Size: $value")
     }
 
     @ReactProp(name = "adId")
@@ -239,8 +300,6 @@ class PubstarAdViewManager() :
         view.post {
             helper.onlyLoadAndShowAdWhenAllPropsSet(view)
         }
-
-        Log.d("PubstarAdViewManager", "set adId: $value")
     }
 
     @ReactProp(name = "type")
@@ -254,7 +313,5 @@ class PubstarAdViewManager() :
         view.post {
             helper.onlyLoadAndShowAdWhenAllPropsSet(view)
         }
-
-        Log.d("PubstarAdViewManager", "set Type: $value")
     }
 }

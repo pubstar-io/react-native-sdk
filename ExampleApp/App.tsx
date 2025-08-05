@@ -71,12 +71,14 @@ const App = () => {
           style={{ width: '100%', height: height, backgroundColor: 'lightgray' }}
           size="small"
           type="banner"
+          onAdRendered={() => console.log('Banner ad rendered')}
         />
         <PubstarAdView
           adId="1233/99228313581"
           style={{ width: '100%', height: height, backgroundColor: 'lightgray' }}
           size="small"
           type="native"
+          onAdRendered={() => console.log('Native ad rendered')}
         />
         <Button
           title="Show Interstitial Ad"
