@@ -38,7 +38,7 @@ class PubstarModule(reactContext: ReactApplicationContext) : NativeRTNPubstarSpe
     promise.resolve(a + b)
   }
 
-  override fun init(promise: Promise) {
+  override fun initialization(promise: Promise) {
     PubStarAdManager.getInstance()
       .setInitAdListener(object : InitAdListener {
           override fun onDone() {

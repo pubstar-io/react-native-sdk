@@ -15,12 +15,109 @@
 namespace facebook::react {
 
 
-  class JSI_EXPORT NativeRTNPubstarCxxSpecJSI : public TurboModule {
+  
+#pragma mark - NativeRTNPubstarErrorCode
+
+template <typename P0, typename P1>
+struct NativeRTNPubstarErrorCode {
+  P0 name;
+  P1 code;
+  bool operator==(const NativeRTNPubstarErrorCode &other) const {
+    return name == other.name && code == other.code;
+  }
+};
+
+template <typename T>
+struct NativeRTNPubstarErrorCodeBridging {
+  static T types;
+
+  static T fromJs(
+      jsi::Runtime &rt,
+      const jsi::Object &value,
+      const std::shared_ptr<CallInvoker> &jsInvoker) {
+    T result{
+      bridging::fromJs<decltype(types.name)>(rt, value.getProperty(rt, "name"), jsInvoker),
+      bridging::fromJs<decltype(types.code)>(rt, value.getProperty(rt, "code"), jsInvoker)};
+    return result;
+  }
+
+#ifdef DEBUG
+  static jsi::String nameToJs(jsi::Runtime &rt, decltype(types.name) value) {
+    return bridging::toJs(rt, value);
+  }
+
+  static double codeToJs(jsi::Runtime &rt, decltype(types.code) value) {
+    return bridging::toJs(rt, value);
+  }
+#endif
+
+  static jsi::Object toJs(
+      jsi::Runtime &rt,
+      const T &value,
+      const std::shared_ptr<CallInvoker> &jsInvoker) {
+    auto result = facebook::jsi::Object(rt);
+    result.setProperty(rt, "name", bridging::toJs(rt, value.name, jsInvoker));
+    result.setProperty(rt, "code", bridging::toJs(rt, value.code, jsInvoker));
+    return result;
+  }
+};
+
+
+
+#pragma mark - NativeRTNPubstarRewardModel
+
+template <typename P0, typename P1>
+struct NativeRTNPubstarRewardModel {
+  P0 amount;
+  P1 type;
+  bool operator==(const NativeRTNPubstarRewardModel &other) const {
+    return amount == other.amount && type == other.type;
+  }
+};
+
+template <typename T>
+struct NativeRTNPubstarRewardModelBridging {
+  static T types;
+
+  static T fromJs(
+      jsi::Runtime &rt,
+      const jsi::Object &value,
+      const std::shared_ptr<CallInvoker> &jsInvoker) {
+    T result{
+      bridging::fromJs<decltype(types.amount)>(rt, value.getProperty(rt, "amount"), jsInvoker),
+      bridging::fromJs<decltype(types.type)>(rt, value.getProperty(rt, "type"), jsInvoker)};
+    return result;
+  }
+
+#ifdef DEBUG
+  static double amountToJs(jsi::Runtime &rt, decltype(types.amount) value) {
+    return bridging::toJs(rt, value);
+  }
+
+  static jsi::String typeToJs(jsi::Runtime &rt, decltype(types.type) value) {
+    return bridging::toJs(rt, value);
+  }
+#endif
+
+  static jsi::Object toJs(
+      jsi::Runtime &rt,
+      const T &value,
+      const std::shared_ptr<CallInvoker> &jsInvoker) {
+    auto result = facebook::jsi::Object(rt);
+    result.setProperty(rt, "amount", bridging::toJs(rt, value.amount, jsInvoker));
+    result.setProperty(rt, "type", bridging::toJs(rt, value.type, jsInvoker));
+    return result;
+  }
+};
+
+class JSI_EXPORT NativeRTNPubstarCxxSpecJSI : public TurboModule {
 protected:
   NativeRTNPubstarCxxSpecJSI(std::shared_ptr<CallInvoker> jsInvoker);
 
 public:
   virtual jsi::Value add(jsi::Runtime &rt, double a, double b) = 0;
+  virtual jsi::Value initialization(jsi::Runtime &rt) = 0;
+  virtual void loadAndShow(jsi::Runtime &rt, jsi::String adId, jsi::Function onLoadError, jsi::Function onLoaded, jsi::Function onAdHide, jsi::Function onAdShowed, jsi::Function onError) = 0;
 
 };
 
@@ -58,6 +155,22 @@ private:
 
       return bridging::callFromJs<jsi::Value>(
           rt, &T::add, jsInvoker_, instance_, std::move(a), std::move(b));
+    }
+    jsi::Value initialization(jsi::Runtime &rt) override {
+      static_assert(
+          bridging::getParameterCount(&T::initialization) == 1,
+          "Expected initialization(...) to have 1 parameters");
+
+      return bridging::callFromJs<jsi::Value>(
+          rt, &T::initialization, jsInvoker_, instance_);
+    }
+    void loadAndShow(jsi::Runtime &rt, jsi::String adId, jsi::Function onLoadError, jsi::Function onLoaded, jsi::Function onAdHide, jsi::Function onAdShowed, jsi::Function onError) override {
+      static_assert(
+          bridging::getParameterCount(&T::loadAndShow) == 7,
+          "Expected loadAndShow(...) to have 7 parameters");
+
+      return bridging::callFromJs<void>(
+          rt, &T::loadAndShow, jsInvoker_, instance_, std::move(adId), std::move(onLoadError), std::move(onLoaded), std::move(onAdHide), std::move(onAdShowed), std::move(onError));
     }
 
   private:

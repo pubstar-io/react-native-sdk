@@ -12,7 +12,7 @@ export interface ErrorCode {
 
 export interface Spec extends TurboModule {
   add(a: number, b: number): Promise<number>;
-  init(): Promise<void>;
+  initialization(): Promise<void>;
   loadAndShow(
     adId: string,
     onLoadError: (errorCode: ErrorCode) => void,

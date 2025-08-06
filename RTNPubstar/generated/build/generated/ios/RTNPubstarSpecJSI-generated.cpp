@@ -18,10 +18,29 @@ static jsi::Value __hostFunction_NativeRTNPubstarCxxSpecJSI_add(jsi::Runtime &rt
     count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asNumber()
   );
 }
+static jsi::Value __hostFunction_NativeRTNPubstarCxxSpecJSI_initialization(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+  return static_cast<NativeRTNPubstarCxxSpecJSI *>(&turboModule)->initialization(
+    rt
+  );
+}
+static jsi::Value __hostFunction_NativeRTNPubstarCxxSpecJSI_loadAndShow(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+  static_cast<NativeRTNPubstarCxxSpecJSI *>(&turboModule)->loadAndShow(
+    rt,
+    count <= 0 ? throw jsi::JSError(rt, "Expected argument in position 0 to be passed") : args[0].asString(rt),
+    count <= 1 ? throw jsi::JSError(rt, "Expected argument in position 1 to be passed") : args[1].asObject(rt).asFunction(rt),
+    count <= 2 ? throw jsi::JSError(rt, "Expected argument in position 2 to be passed") : args[2].asObject(rt).asFunction(rt),
+    count <= 3 ? throw jsi::JSError(rt, "Expected argument in position 3 to be passed") : args[3].asObject(rt).asFunction(rt),
+    count <= 4 ? throw jsi::JSError(rt, "Expected argument in position 4 to be passed") : args[4].asObject(rt).asFunction(rt),
+    count <= 5 ? throw jsi::JSError(rt, "Expected argument in position 5 to be passed") : args[5].asObject(rt).asFunction(rt)
+  );
+  return jsi::Value::undefined();
+}
 
 NativeRTNPubstarCxxSpecJSI::NativeRTNPubstarCxxSpecJSI(std::shared_ptr<CallInvoker> jsInvoker)
   : TurboModule("RTNPubstar", jsInvoker) {
   methodMap_["add"] = MethodMetadata {2, __hostFunction_NativeRTNPubstarCxxSpecJSI_add};
+  methodMap_["initialization"] = MethodMetadata {0, __hostFunction_NativeRTNPubstarCxxSpecJSI_initialization};
+  methodMap_["loadAndShow"] = MethodMetadata {6, __hostFunction_NativeRTNPubstarCxxSpecJSI_loadAndShow};
 }
 
 

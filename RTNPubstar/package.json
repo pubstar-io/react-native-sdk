@@ -34,7 +34,7 @@
   },
   "codegenConfig": {
     "name": "RTNPubstarSpec",
-    "type": "components",
+    "type": "all",
     "jsSrcsDir": "js",
     "android": {
       "javaPackageName": "io.pubstar"

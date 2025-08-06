@@ -39,6 +39,14 @@ NS_ASSUME_NONNULL_BEGIN
           b:(double)b
     resolve:(RCTPromiseResolveBlock)resolve
      reject:(RCTPromiseRejectBlock)reject;
+- (void)initialization:(RCTPromiseResolveBlock)resolve
+                reject:(RCTPromiseRejectBlock)reject;
+- (void)loadAndShow:(NSString *)adId
+        onLoadError:(RCTResponseSenderBlock)onLoadError
+           onLoaded:(RCTResponseSenderBlock)onLoaded
+           onAdHide:(RCTResponseSenderBlock)onAdHide
+         onAdShowed:(RCTResponseSenderBlock)onAdShowed
+            onError:(RCTResponseSenderBlock)onError;
 
 @end
 

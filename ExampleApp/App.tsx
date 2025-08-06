@@ -18,7 +18,7 @@ import PubstarAdView from 'rtn-pubstar/js/PubstarAdView';
 
 async function initRTNPubstar() {
   try {
-    await RTNPubstar?.init();
+    await RTNPubstar?.initialization();
     console.log('RTNPubstar initialized');
   } catch (error) {
     console.error('Error initializing RTNPubstar:', error);
