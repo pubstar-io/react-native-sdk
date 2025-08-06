@@ -1,13 +1,19 @@
-import React, { memo, useMemo } from "react";
-import { StyleProp, ViewStyle } from "react-native";
+import React, { memo, useState } from "react";
+import { StyleProp, StyleSheet, ViewStyle } from "react-native";
 import PubstarAdViewNativeComponent from "./PubstarAdViewNativeComponent";
-import { RewardModel, ErrorCode } from "./NativeRTNPubstar"
+import { RewardModel, ErrorCode } from "./NativeRTNPubstar";
+
+const BannerHeight = { small: 78, medium: 130, large: 260 };
+const NativeHeight = { small: 78, medium: 130, large: 299 };
+
+type PubstarAdSize = keyof typeof BannerHeight;
+type PubstarAdType = "banner" | "native";
 
 interface Props {
   adId: string;
-  style: StyleProp<ViewStyle>;
-  size?: "small" | "medium" | "large";
-  type: "banner" | "native";
+  style?: StyleProp<ViewStyle>;
+  size?: PubstarAdSize;
+  type: PubstarAdType;
   onLoaded?: () => void;
   onLoadedError?: (errorCode: ErrorCode) => void;
   onShowed?: () => void;
@@ -26,43 +32,43 @@ const PubstarAdView = ({
   onHide,
   onShowedError,
 }: Props) => {
-  const formatSize = useMemo(() => {
-    switch (size) {
-      case "small":
-        return "small";
-      case "medium":
-        return "medium";
-      case "large":
-        return "large";
-      default:
-        return "small";
-    }
-  }, [size]);
+  const [height, setHeight] = useState(0);
 
-  const formatType = useMemo(() => {
-    switch (type) {
-      case "banner":
-        return "banner";
-      case "native":
-        return "native";
-      default:
-        return "banner";
-    }
-  }, [type]);
+  function updateHeight() {
+    const heightMap = type === "banner" ? BannerHeight : NativeHeight;
+    setHeight(heightMap[size] ?? BannerHeight.small);
+  }
+
+  function handleOnShowed() {
+    updateHeight();
+    onShowed?.();
+  }
+
+  function handleOnHide(reward: RewardModel) {
+    onHide?.(reward);
+  }
+
+  function handleOnLoadedError(errorCode: ErrorCode) {
+    onLoadedError?.(errorCode);
+  }
+
+  function handleOnShowedError(errorCode: ErrorCode) {
+    onShowedError?.(errorCode);
+  }
 
   return (
     <PubstarAdViewNativeComponent
       adId={adId}
-      size={formatSize}
-      style={style}
-      type={formatType}
+      size={size}
+      style={StyleSheet.flatten([style, { height, width: '100%' }])}
+      type={type}
       onLoaded={onLoaded}
-      onLoadedError={onLoadedError}
-      onShowed={onShowed}
-      onHide={onHide}
-      onShowedError={onShowedError}
+      onLoadedError={handleOnLoadedError}
+      onShowed={handleOnShowed}
+      onHide={handleOnHide}
+      onShowedError={handleOnShowedError}
     />
   );
-}
+};
 
 export default memo(PubstarAdView);

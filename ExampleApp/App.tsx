@@ -28,8 +28,6 @@ async function initRTNPubstar() {
 initRTNPubstar();
 
 const App = () => {
-  const [height, setHeight] = useState(100);
-
   async function onButtonClick(adId: string) {
     Pubstar.loadAndShowAd(
       adId,
@@ -62,35 +60,24 @@ const App = () => {
       <View style={styles.container}>
         <PubstarAdView
           adId="1233/99228313580"
-          style={{
-            width: '100%',
-            height: height,
-            backgroundColor: 'lightgray',
-          }}
+          style={styles.ad}
           size="small"
           type="banner"
-          onAdRendered={() => console.log('Banner ad rendered')}
           onLoaded={() => {
             console.log('Banner ad loaded');
           }}
           onLoadedError={() => console.log('Banner ad load error')}
           onShowed={() => {
             console.log('Banner ad showed');
-            setHeight(101);
           }}
           onHide={() => console.log('Banner ad hidden')}
           onShowedError={() => console.log('Banner ad showed error')}
         />
         <PubstarAdView
           adId="1233/99228313581"
-          style={{
-            width: '100%',
-            height: height,
-            backgroundColor: 'lightgray',
-          }}
-          size="small"
+          style={styles.ad}
+          size="medium"
           type="native"
-          onAdRendered={() => console.log('Native ad rendered')}
           onLoaded={() => console.log('Native ad loaded')}
           onLoadedError={() => console.log('Native ad load error')}
           onShowed={() => console.log('Native ad showed')}
@@ -125,6 +112,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     gap: 16,
+  },
+  ad: {
+    backgroundColor: 'lightblue',
   },
 });
 
