@@ -5,9 +5,18 @@ PODS:
   - FBLazyVector (0.80.1)
   - fmt (11.0.2)
   - glog (0.3.5)
+  - Google-Mobile-Ads-SDK (11.10.0):
+    - GoogleUserMessagingPlatform (>= 1.1)
+  - GoogleAds-IMA-iOS-SDK (3.26.1)
+  - GoogleUserMessagingPlatform (3.0.0)
   - hermes-engine (0.80.1):
     - hermes-engine/Pre-built (= 0.80.1)
   - hermes-engine/Pre-built (0.80.1)
+  - InMobiSDK (10.8.6)
+  - Pubstar (1.1.8):
+    - Google-Mobile-Ads-SDK (~> 11.10.0)
+    - GoogleAds-IMA-iOS-SDK (~> 3.26.1)
+    - InMobiSDK (~> 10.8.3)
   - RCT-Folly (2024.11.18.00):
     - boost
     - DoubleConversion
@@ -2129,6 +2138,7 @@ PODS:
     - fmt
     - glog
     - hermes-engine
+    - Pubstar
     - RCT-Folly
     - RCT-Folly/Fabric
     - RCTRequired
@@ -2233,6 +2243,11 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - Google-Mobile-Ads-SDK
+    - GoogleAds-IMA-iOS-SDK
+    - GoogleUserMessagingPlatform
+    - InMobiSDK
+    - Pubstar
     - SocketRocket
 
 EXTERNAL SOURCES:
@@ -2391,7 +2406,12 @@ SPEC CHECKSUMS:
   FBLazyVector: 09f03e4b6f42f955734b64a118f86509cc719427
   fmt: a40bb5bd0294ea969aaaba240a927bd33d878cdd
   glog: 5683914934d5b6e4240e497e0f4a3b42d1854183
+  Google-Mobile-Ads-SDK: 13e6e98edfd78ad8d8a791edb927658cc260a56f
+  GoogleAds-IMA-iOS-SDK: 10b8f194e7cd2714d4de9a0587c46c8aaf06c620
+  GoogleUserMessagingPlatform: f8d0cdad3ca835406755d0a69aa634f00e76d576
   hermes-engine: 4f07404533b808de66cf48ac4200463068d0e95a
+  InMobiSDK: a6e7bfbecb698c83183f42c5a3cfa1ac52f16bff
+  Pubstar: 4eedd72eafc1662dbcffd9dd5e53e8e1634f07dd
   RCT-Folly: 846fda9475e61ec7bcbf8a3fe81edfcaeb090669
   RCTDeprecation: efa5010912100e944a7ac9a93a157e1def1988fe
   RCTRequired: bbc4cf999ddc4a4b076e076c74dd1d39d0254630
@@ -2456,7 +2476,7 @@ SPEC CHECKSUMS:
   ReactAppDependencyProvider: afd905e84ee36e1678016ae04d7370c75ed539be
   ReactCodegen: f8d5fb047c4cd9d2caade972cad9edac22521362
   ReactCommon: 17fd88849a174bf9ce45461912291aca711410fc
-  rtn-pubstar: 0ed807a4bf7800cc2ce7b7c21515b9609278e72d
+  rtn-pubstar: 01b1ad7e74967bbb335d59ca51fdaec9633ce5a7
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: daa1e4de4b971b977b23bc842aaa3e135324f1f3
 

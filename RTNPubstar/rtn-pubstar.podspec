@@ -14,6 +14,9 @@ Pod::Spec.new do |s|
   s.source          = { :git => package["repository"], :tag => "#{s.version}" }
 
   s.source_files    = "ios/**/*.{h,m,mm,swift}"
+  s.private_header_files = "ios/**/*.h"
+
+  s.dependency "Pubstar"
 
   install_modules_dependencies(s)
 end

@@ -1,14 +1,14 @@
-import RTNPubstar, { RewardModel } from "./NativeRTNPubstar";
+import RTNPubstar, { ErrorCode, RewardModel } from "./NativeRTNPubstar";
 
 export interface AdLoaderListener {
-  onError?: (errorCode: string) => void;
+  onError?: (errorCode: ErrorCode) => void;
   onLoaded?: () => void;
 }
 
 export interface AdShowListener {
   onAdHide?: (reward: RewardModel | undefined) => void;
   onAdShowed?: () => void;
-  onError?: (errorCode: string) => void;
+  onError?: (errorCode: ErrorCode) => void;
 }
 
 function loadAndShowAd(
@@ -23,7 +23,7 @@ function loadAndShowAd(
 
   RTNPubstar.loadAndShow(
     adId,
-    (errorCode: string) => {
+    (errorCode: ErrorCode) => {
       adLoaderListener?.onError?.(errorCode);
     },
     () => {
@@ -35,7 +35,7 @@ function loadAndShowAd(
     () => {
       adShowListener?.onAdShowed?.();
     },
-    (errorCode: string) => {
+    (errorCode: ErrorCode) => {
       adShowListener?.onError?.(errorCode);
     }
   );
