@@ -26,8 +26,7 @@ RCT_EXPORT_MODULE()
 
   __block BOOL isCalled = NO;
 
-  [moduleImpl
-      initializationOnDone:^{
+  [moduleImpl initializationOnDone:^{
         if (isCalled)
           return;
         isCalled = YES;
@@ -40,7 +39,6 @@ RCT_EXPORT_MODULE()
           return;
         isCalled = YES;
 
-        NSLog(@"[Pubstar] Init failed: %ld", (long)errorCode);
         reject(@"INIT_ERROR",
                [NSString stringWithFormat:@"Error code: %ld", (long)errorCode],
                nil);
@@ -53,7 +51,6 @@ RCT_EXPORT_MODULE()
            onAdHide:(RCTResponseSenderBlock)onAdHide
          onAdShowed:(RCTResponseSenderBlock)onAdShowed
             onError:(RCTResponseSenderBlock)onError {
-  NSLog(@"[Pubstar] loadAndShow called with adId: %@", adId);
 
   [moduleImpl loadAndShowWithAdId:adId
       onLoadedError:^(NSInteger errorCode) {
@@ -67,7 +64,10 @@ RCT_EXPORT_MODULE()
         onLoaded(@[]);
       }
       onHide:^{
-        NSDictionary *reward = @{@"type" : @"coin", @"amount" : @(0)};
+        NSDictionary *reward =
+            @{@"type" : @"coin",
+              @"amount" : @(0)};
+      
         onAdHide(@[ reward ]);
       }
       onShowed:^{
