@@ -1,4 +1,3 @@
-
 import Foundation
 import Pubstar
 
@@ -16,7 +15,7 @@ import Pubstar
             }
         )
     }
-    
+
     @objc public func loadAd(
         adId: String,
         onLoaded: @escaping () -> Void,
@@ -32,7 +31,7 @@ import Pubstar
             }
         )
     }
-    
+
     @objc public func showAd(
         adId: String,
         onHide: @escaping () -> Void,
@@ -46,14 +45,14 @@ import Pubstar
                     onHide()
                 },
                 onShowed: {
-                  onShowed()
+                    onShowed()
                 },
                 onError: { errorCode in
                     onError(errorCode.rawValue)
                 }
             )
     }
-    
+
     @objc public func loadAndShow() {
         PubstarAdManagerWrapper.loadAndShowAd(
             adId: "1233/99228313582",
@@ -74,8 +73,7 @@ import Pubstar
             },
         )
     }
-    
-    
+
     @objc public func loadAndShow(
         adId: String
     ) {
@@ -98,5 +96,38 @@ import Pubstar
             },
         )
     }
-    
+
+    @objc public func loadAndShow(
+        adId: String,
+        onLoadedError: @escaping (Int) -> Void,
+        onLoaded: @escaping () -> Void,
+        onHide: @escaping () -> Void,
+        onShowed: @escaping () -> Void,
+        onShowedError: @escaping (Int) -> Void
+    ) {
+        PubstarAdManagerWrapper.loadAndShowAd(
+            adId: adId,
+            onLoadedError: { errorCode in
+                print("onLoadedError callled: \(errorCode)")
+                onLoadedError(errorCode.rawValue)
+            },
+            onLoaded: {
+                print("onLoaded called")
+                onLoaded()
+            },
+            onHide: { reward in
+                print("onHide called")
+                onHide()
+            },
+            onShowed: {
+                print("onShowed called")
+                onShowed()
+            },
+            onShowedError: { errorCode in
+                print("onShowedError called: \(errorCode)")
+                onShowedError(errorCode.rawValue)
+            },
+        )
+    }
+
 }
