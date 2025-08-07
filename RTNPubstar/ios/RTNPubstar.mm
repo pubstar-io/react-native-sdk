@@ -58,7 +58,7 @@ RCT_EXPORT_MODULE()
   [moduleImpl loadAndShowWithAdId:adId
       onLoadedError:^(NSInteger errorCode) {
         NSDictionary *error =
-            @{@"name" : @"SHOW_ERROR",
+            @{@"name" : @"LOADED_ERROR",
               @"code" : @(errorCode)};
 
         onLoadError(@[ error ]);
@@ -67,7 +67,7 @@ RCT_EXPORT_MODULE()
         onLoaded(@[]);
       }
       onHide:^{
-        NSDictionary *reward = @{@"type" : @"coin", @"amount" : @(50)};
+        NSDictionary *reward = @{@"type" : @"coin", @"amount" : @(0)};
         onAdHide(@[ reward ]);
       }
       onShowed:^{

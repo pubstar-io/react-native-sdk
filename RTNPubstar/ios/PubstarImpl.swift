@@ -108,23 +108,18 @@ import Pubstar
         PubstarAdManagerWrapper.loadAndShowAd(
             adId: adId,
             onLoadedError: { errorCode in
-                print("onLoadedError callled: \(errorCode)")
                 onLoadedError(errorCode.rawValue)
             },
             onLoaded: {
-                print("onLoaded called")
                 onLoaded()
             },
             onHide: { reward in
-                print("onHide called")
                 onHide()
             },
             onShowed: {
-                print("onShowed called")
                 onShowed()
             },
             onShowedError: { errorCode in
-                print("onShowedError called: \(errorCode)")
                 onShowedError(errorCode.rawValue)
             },
         )
