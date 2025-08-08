@@ -35,12 +35,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol NativeRTNPubstarSpec <RCTBridgeModule, RCTTurboModule>
 
-- (void)add:(double)a
-          b:(double)b
-    resolve:(RCTPromiseResolveBlock)resolve
-     reject:(RCTPromiseRejectBlock)reject;
 - (void)initialization:(RCTPromiseResolveBlock)resolve
                 reject:(RCTPromiseRejectBlock)reject;
+- (void)loadAd:(NSString *)adId
+       onError:(RCTResponseSenderBlock)onError
+      onLoaded:(RCTResponseSenderBlock)onLoaded;
+- (void)showAd:(NSString *)adId
+        onHide:(RCTResponseSenderBlock)onHide
+      onShowed:(RCTResponseSenderBlock)onShowed
+       onError:(RCTResponseSenderBlock)onError;
 - (void)loadAndShow:(NSString *)adId
         onLoadError:(RCTResponseSenderBlock)onLoadError
            onLoaded:(RCTResponseSenderBlock)onLoaded

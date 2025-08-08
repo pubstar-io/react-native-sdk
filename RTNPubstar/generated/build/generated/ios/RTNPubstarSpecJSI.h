@@ -115,8 +115,9 @@ protected:
   NativeRTNPubstarCxxSpecJSI(std::shared_ptr<CallInvoker> jsInvoker);
 
 public:
-  virtual jsi::Value add(jsi::Runtime &rt, double a, double b) = 0;
   virtual jsi::Value initialization(jsi::Runtime &rt) = 0;
+  virtual void loadAd(jsi::Runtime &rt, jsi::String adId, jsi::Function onError, jsi::Function onLoaded) = 0;
+  virtual void showAd(jsi::Runtime &rt, jsi::String adId, jsi::Function onHide, jsi::Function onShowed, jsi::Function onError) = 0;
   virtual void loadAndShow(jsi::Runtime &rt, jsi::String adId, jsi::Function onLoadError, jsi::Function onLoaded, jsi::Function onAdHide, jsi::Function onAdShowed, jsi::Function onError) = 0;
 
 };
@@ -148,14 +149,6 @@ private:
 
     }
 
-    jsi::Value add(jsi::Runtime &rt, double a, double b) override {
-      static_assert(
-          bridging::getParameterCount(&T::add) == 3,
-          "Expected add(...) to have 3 parameters");
-
-      return bridging::callFromJs<jsi::Value>(
-          rt, &T::add, jsInvoker_, instance_, std::move(a), std::move(b));
-    }
     jsi::Value initialization(jsi::Runtime &rt) override {
       static_assert(
           bridging::getParameterCount(&T::initialization) == 1,
@@ -163,6 +156,22 @@ private:
 
       return bridging::callFromJs<jsi::Value>(
           rt, &T::initialization, jsInvoker_, instance_);
+    }
+    void loadAd(jsi::Runtime &rt, jsi::String adId, jsi::Function onError, jsi::Function onLoaded) override {
+      static_assert(
+          bridging::getParameterCount(&T::loadAd) == 4,
+          "Expected loadAd(...) to have 4 parameters");
+
+      return bridging::callFromJs<void>(
+          rt, &T::loadAd, jsInvoker_, instance_, std::move(adId), std::move(onError), std::move(onLoaded));
+    }
+    void showAd(jsi::Runtime &rt, jsi::String adId, jsi::Function onHide, jsi::Function onShowed, jsi::Function onError) override {
+      static_assert(
+          bridging::getParameterCount(&T::showAd) == 5,
+          "Expected showAd(...) to have 5 parameters");
+
+      return bridging::callFromJs<void>(
+          rt, &T::showAd, jsInvoker_, instance_, std::move(adId), std::move(onHide), std::move(onShowed), std::move(onError));
     }
     void loadAndShow(jsi::Runtime &rt, jsi::String adId, jsi::Function onLoadError, jsi::Function onLoaded, jsi::Function onAdHide, jsi::Function onAdShowed, jsi::Function onError) override {
       static_assert(

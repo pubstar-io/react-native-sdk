@@ -26,12 +26,16 @@
 
 namespace facebook::react {
   
-    static facebook::jsi::Value __hostFunction_NativeRTNPubstarSpecJSI_add(facebook::jsi::Runtime& rt, TurboModule &turboModule, const facebook::jsi::Value* args, size_t count) {
-      return static_cast<ObjCTurboModule&>(turboModule).invokeObjCMethod(rt, PromiseKind, "add", @selector(add:b:resolve:reject:), args, count);
-    }
-
     static facebook::jsi::Value __hostFunction_NativeRTNPubstarSpecJSI_initialization(facebook::jsi::Runtime& rt, TurboModule &turboModule, const facebook::jsi::Value* args, size_t count) {
       return static_cast<ObjCTurboModule&>(turboModule).invokeObjCMethod(rt, PromiseKind, "initialization", @selector(initialization:reject:), args, count);
+    }
+
+    static facebook::jsi::Value __hostFunction_NativeRTNPubstarSpecJSI_loadAd(facebook::jsi::Runtime& rt, TurboModule &turboModule, const facebook::jsi::Value* args, size_t count) {
+      return static_cast<ObjCTurboModule&>(turboModule).invokeObjCMethod(rt, VoidKind, "loadAd", @selector(loadAd:onError:onLoaded:), args, count);
+    }
+
+    static facebook::jsi::Value __hostFunction_NativeRTNPubstarSpecJSI_showAd(facebook::jsi::Runtime& rt, TurboModule &turboModule, const facebook::jsi::Value* args, size_t count) {
+      return static_cast<ObjCTurboModule&>(turboModule).invokeObjCMethod(rt, VoidKind, "showAd", @selector(showAd:onHide:onShowed:onError:), args, count);
     }
 
     static facebook::jsi::Value __hostFunction_NativeRTNPubstarSpecJSI_loadAndShow(facebook::jsi::Runtime& rt, TurboModule &turboModule, const facebook::jsi::Value* args, size_t count) {
@@ -41,10 +45,13 @@ namespace facebook::react {
   NativeRTNPubstarSpecJSI::NativeRTNPubstarSpecJSI(const ObjCTurboModule::InitParams &params)
     : ObjCTurboModule(params) {
       
-        methodMap_["add"] = MethodMetadata {2, __hostFunction_NativeRTNPubstarSpecJSI_add};
-        
-        
         methodMap_["initialization"] = MethodMetadata {0, __hostFunction_NativeRTNPubstarSpecJSI_initialization};
+        
+        
+        methodMap_["loadAd"] = MethodMetadata {3, __hostFunction_NativeRTNPubstarSpecJSI_loadAd};
+        
+        
+        methodMap_["showAd"] = MethodMetadata {4, __hostFunction_NativeRTNPubstarSpecJSI_showAd};
         
         
         methodMap_["loadAndShow"] = MethodMetadata {6, __hostFunction_NativeRTNPubstarSpecJSI_loadAndShow};

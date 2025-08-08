@@ -11,8 +11,18 @@ export interface ErrorCode {
 }
 
 export interface Spec extends TurboModule {
-  add(a: number, b: number): Promise<number>;
   initialization(): Promise<void>;
+  loadAd(
+    adId: string,
+    onError: (errorCode: ErrorCode) => void,
+    onLoaded: () => void,
+  ): void;
+  showAd(
+    adId: string,
+    onHide: (reward: RewardModel | undefined) => void,
+    onShowed: () => void,
+    onError: (errorCode: ErrorCode) => void,
+  ): void;
   loadAndShow(
     adId: string,
     onLoadError: (errorCode: ErrorCode) => void,

@@ -26,7 +26,8 @@ RCT_EXPORT_MODULE()
 
   __block BOOL isCalled = NO;
 
-  [moduleImpl initializationOnDone:^{
+  [moduleImpl
+      initializationOnDone:^{
         if (isCalled)
           return;
         isCalled = YES;
@@ -64,10 +65,8 @@ RCT_EXPORT_MODULE()
         onLoaded(@[]);
       }
       onHide:^{
-        NSDictionary *reward =
-            @{@"type" : @"coin",
-              @"amount" : @(0)};
-      
+        NSDictionary *reward = @{@"type" : @"coin", @"amount" : @(0)};
+
         onAdHide(@[ reward ]);
       }
       onShowed:^{
@@ -82,12 +81,40 @@ RCT_EXPORT_MODULE()
       }];
 }
 
-- (void)add:(double)a
-          b:(double)b
-    resolve:(RCTPromiseResolveBlock)resolve
-     reject:(RCTPromiseRejectBlock)reject {
-  NSNumber *result = [[NSNumber alloc] initWithInteger:a + b];
-  resolve(result);
+- (void)loadAd:(NSString *)adId
+       onError:(RCTResponseSenderBlock)onError
+      onLoaded:(RCTResponseSenderBlock)onLoaded {
+  [moduleImpl loadAdWithAdId:adId
+      onLoaded:^{
+        onLoaded(@[]);
+      }
+      onError:^(NSInteger errorCode) {
+        NSDictionary *error =
+            @{@"name" : @"LOADED_ERROR",
+              @"code" : @(errorCode)};
+
+        onError(@[ error ]);
+      }];
+}
+
+- (void)showAd:(NSString *)adId
+        onHide:(RCTResponseSenderBlock)onHide
+      onShowed:(RCTResponseSenderBlock)onShowed
+       onError:(RCTResponseSenderBlock)onError {
+  [moduleImpl showAdWithAdId:adId
+      onHide:^{
+        onHide(@[]);
+      }
+      onShowed:^{
+        onShowed(@[]);
+      }
+      onError:^(NSInteger errorCode) {
+        NSDictionary *error =
+            @{@"name" : @"SHOWED_ERROR",
+              @"code" : @(errorCode)};
+
+        onError(@[ error ]);
+      }];
 }
 
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:

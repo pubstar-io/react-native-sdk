@@ -53,6 +53,11 @@ const App = () => {
     );
   }
 
+  async function onLoadThenShow() {
+    await Pubstar.loadAd('1233/99228313582');
+    await Pubstar.showAd('1233/99228313582');
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle={'dark-content'} />
@@ -86,7 +91,8 @@ const App = () => {
         />
         <Button
           title="Show Interstitial Ad"
-          onPress={() => onButtonClick('1233/99228313582')}
+          // onPress={() => onButtonClick('1233/99228313582')}
+          onPress={onLoadThenShow}
         />
         <Button
           title="Show Open Ad"
