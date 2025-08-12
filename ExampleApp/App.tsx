@@ -4,7 +4,7 @@
  *
  * @format
  */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   SafeAreaView,
   StatusBar,
@@ -28,6 +28,14 @@ async function initRTNPubstar() {
 initRTNPubstar();
 
 const App = () => {
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setShow(true);
+    }, 3000);
+  }, []);
+
   async function onButtonClick(adId: string) {
     Pubstar.loadAndShowAd(
       adId,
@@ -53,11 +61,6 @@ const App = () => {
     );
   }
 
-  async function onLoadThenShow() {
-    await Pubstar.loadAd('1233/99228313582');
-    await Pubstar.showAd('1233/99228313582');
-  }
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle={'dark-content'} />
@@ -78,21 +81,22 @@ const App = () => {
           onHide={() => console.log('Banner ad hidden')}
           onShowedError={() => console.log('Banner ad showed error')}
         />
-        <PubstarAdView
-          adId="1233/99228313581"
-          style={styles.ad}
-          size="medium"
-          type="native"
-          onLoaded={() => console.log('Native ad loaded')}
-          onLoadedError={() => console.log('Native ad load error')}
-          onShowed={() => console.log('Native ad showed')}
-          onHide={() => console.log('Native ad hidden')}
-          onShowedError={() => console.log('Native ad showed error')}
-        />
+        {show && (
+          <PubstarAdView
+            adId="1233/99228313581"
+            style={styles.ad}
+            size="medium"
+            type="native"
+            onLoaded={() => console.log('Native ad loaded')}
+            onLoadedError={() => console.log('Native ad load error')}
+            onShowed={() => console.log('Native ad showed')}
+            onHide={() => console.log('Native ad hidden')}
+            onShowedError={() => console.log('Native ad showed error')}
+          />
+        )}
         <Button
           title="Show Interstitial Ad"
-          // onPress={() => onButtonClick('1233/99228313582')}
-          onPress={onLoadThenShow}
+          onPress={() => onButtonClick('1233/99228313582')}
         />
         <Button
           title="Show Open Ad"

@@ -1,5 +1,5 @@
 import React, { memo, useState } from "react";
-import { StyleProp, StyleSheet, ViewStyle } from "react-native";
+import { StyleProp, StyleSheet, ViewStyle, Platform } from "react-native";
 import PubstarAdViewNativeComponent from "./PubstarAdViewNativeComponent";
 import { RewardModel, ErrorCode } from "./NativeRTNPubstar";
 
@@ -32,7 +32,14 @@ const PubstarAdView = ({
   onHide,
   onShowedError,
 }: Props) => {
-  const [height, setHeight] = useState(0);
+  const [height, setHeight] = useState(() => {
+    if(Platform.OS === "android") {
+      return 0
+    }
+
+    const heightMap = type === "banner" ? BannerHeight : NativeHeight;
+    return heightMap[size] ?? BannerHeight.small;
+  });
 
   function updateHeight() {
     const heightMap = type === "banner" ? BannerHeight : NativeHeight;

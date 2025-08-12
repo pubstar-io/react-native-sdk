@@ -20,7 +20,7 @@
 
   dispatch_once(&nativeComponentsToken, ^{
     thirdPartyComponents = @{
-
+		@"PubstarAdView": NSClassFromString(@"RTNPubstarAdView"), // rtn-pubstar
     };
   });
 

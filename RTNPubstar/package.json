@@ -38,6 +38,11 @@
     "jsSrcsDir": "js",
     "android": {
       "javaPackageName": "io.pubstar"
+    },
+    "ios": {
+      "componentProvider": {
+        "PubstarAdView": "RTNPubstarAdView"
+      }
     }
   }
 }
