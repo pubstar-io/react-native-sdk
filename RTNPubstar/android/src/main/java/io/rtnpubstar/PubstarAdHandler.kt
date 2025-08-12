@@ -1,7 +1,6 @@
 package io.rtnpubstar
 
 import android.content.Context
-import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.view.ViewGroup
@@ -47,23 +46,18 @@ class PubstarAdHandler {
                 view,
                 props,
                 onLoaded = {
-                    Log.d("PubstarAdViewManager", "callback when ad Loaded")
                     onLoaded()
                 },
                 onLoadedError = { errorCode ->
-                    Log.e("PubstarAdViewManager", "callback onAdLoadedError: ${errorCode.name}")
                     onLoadedError(errorCode)
                 },
                 onShowed = {
-                    Log.d("PubstarAdViewManager", "callback when ad Showed")
                     onShowed()
                 },
                 onHide = { reward ->
-                    Log.d("PubstarAdViewManager", "callback onAdHide: ${reward?.type}")
                     onHide(reward)
                 },
                 onShowedError = { errorCode ->
-                    Log.e("PubstarAdViewManager", "ad load error: ${errorCode.name}")
                     onShowedError(errorCode)
                 }
             )

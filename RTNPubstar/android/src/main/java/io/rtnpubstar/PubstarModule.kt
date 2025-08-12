@@ -15,18 +15,6 @@ import io.pubstar.mobile.ads.model.ErrorCode
 import io.pubstar.mobile.ads.model.RewardModel
 import io.pubstar.mobile.ads.pub.PubStarAdManager
 
-fun rewardModelToWritableMap(reward: RewardModel?): WritableMap {
-    val map = Arguments.createMap()
-    if (reward != null) {
-        map.putString("type", reward.type)
-        map.putInt("amount", reward.amount)
-    } else {
-        map.putString("type", "")
-        map.putInt("amount", 0)
-    }
-    return map
-}
-
 class PubstarModule(reactContext: ReactApplicationContext) : NativeRTNPubstarSpec(reactContext) {
     private val pubStarAdController: PubStarAdController by lazy {
         PubStarAdManager.getAdController()
@@ -111,7 +99,7 @@ class PubstarModule(reactContext: ReactApplicationContext) : NativeRTNPubstarSpe
           },
           object : AdShowedListener {
               override fun onAdHide(any: RewardModel?) {
-                  val rewardMap = rewardModelToWritableMap(any)
+                  val rewardMap = rewardToMap(any)
                   onAdHide.invoke(rewardMap)
               }
 
