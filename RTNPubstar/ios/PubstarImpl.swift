@@ -1,6 +1,34 @@
 import Foundation
 import Pubstar
 
+extension String {
+    func toNativeAdTypeSize() -> NativeAdRequest.TypeSize {
+        switch self.lowercased() {
+        case "small":
+            return .Small
+        case "medium":
+            return .Medium
+        case "large":
+            return .Big
+        default:
+            return .Small
+        }
+    }
+    
+    func toBannerAdSize() -> BannerAdRequest.AdTag {
+        switch self.lowercased() {
+        case "small":
+            return .small
+        case "medium":
+            return .medium
+        case "large":
+            return .big
+        default:
+            return .small
+        }
+    }
+}
+
 @objc public class PubstarImpl: NSObject {
     @objc public func initialization(
         onDone: @escaping () -> Void,
@@ -65,6 +93,73 @@ import Pubstar
             adId: adId,
             onLoadedError: { errorCode in
                 onLoadedError(errorCode.rawValue)
+            },
+            onLoaded: {
+                onLoaded()
+            },
+            onHide: { reward in
+                onHide()
+            },
+            onShowed: {
+                onShowed()
+            },
+            onShowedError: { errorCode in
+                onShowedError(errorCode.rawValue)
+            },
+        )
+    }
+    
+    
+    @objc public func loadAndShowNativeAd(
+        adId: String,
+        view: UIView? = nil,
+        size: String,
+        onLoaderError: @escaping (Int) -> Void,
+        onLoaded: @escaping () -> Void,
+        onHide: @escaping () -> Void,
+        onShowed: @escaping () -> Void,
+        onShowedError: @escaping (Int) -> Void
+    ) {
+        PubstarAdManagerWrapper.loadAndShowNativeAd(
+            adId: adId,
+            view: view,
+            size: size.toNativeAdTypeSize(),
+            isAllowLoadNext: false,
+            onLoaderError: { errorCode in
+                onLoaderError(errorCode.rawValue)
+            },
+            onLoaded: {
+                onLoaded()
+            },
+            onHide: { reward in
+                onHide()
+            },
+            onShowed: {
+                onShowed()
+            },
+            onShowedError: { errorCode in
+                onShowedError(errorCode.rawValue)
+            },
+        )
+    }
+    
+    @objc public func loadAndShowBannerAd(
+        adId: String,
+        view: UIView? = nil,
+        size: String,
+        onLoaderError: @escaping (Int) -> Void,
+        onLoaded: @escaping () -> Void,
+        onHide: @escaping () -> Void,
+        onShowed: @escaping () -> Void,
+        onShowedError: @escaping (Int) -> Void
+    ) {
+        PubstarAdManagerWrapper.loadAndShowBannerAd(
+            adId: adId,
+            view: view,
+            tag: size.toBannerAdSize(),
+            isAllowLoadNext: false,
+            onLoaderError: { errorCode in
+                onLoaderError(errorCode.rawValue)
             },
             onLoaded: {
                 onLoaded()

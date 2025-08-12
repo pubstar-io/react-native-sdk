@@ -6,6 +6,9 @@
 #import <react/renderer/components/RTNPubstarSpec/Props.h>
 #import <react/renderer/components/RTNPubstarSpec/RCTComponentViewHelpers.h>
 
+
+#import "rtn_pubstar-Swift.h"
+
 // Here you might need to import missing headers to satisfy Swift header file compilation
 //#import <WatchConnectivity/WatchConnectivity.h>
 //#import <ExpoModulesCore-Swift.h>
@@ -20,6 +23,10 @@ using namespace facebook::react;
 
 @implementation RTNPubstarAdView {
     UIView *_view;
+    PubstarImpl *moduleImpl;
+    NSString *adId;
+    NSString *size;
+    NSString *type;
 }
 
 - (instancetype)init
@@ -27,19 +34,7 @@ using namespace facebook::react;
     self = [super init];
     if (self) {
         NSLog(@"---init: %@", [self description]);
-
-//        
-//        _view = [[UIView alloc] init];
-//        _view.backgroundColor = [UIColor blackColor];
-//        
-//        CGFloat parentWidth = self.frame.size.width;
-//        
-//        NSLog(@"---parentWidth: %f", parentWidth);
-//        
-//        CGRect frame = CGRectMake(0, 0, 300, 200);
-//        _view.frame = frame;
-//
-//        [self addSubview:_view];
+        moduleImpl = [PubstarImpl new];
     }
     return self;
 }
@@ -66,7 +61,8 @@ using namespace facebook::react;
 
 + (void)load
 {
-  [super load];
+    [super load];
+    NSLog(@"---load");
 }
 
 //  You can listen to this lifecycle event to pause / resume operations as Fabric components are kept in memory to be reused later
@@ -74,6 +70,54 @@ using namespace facebook::react;
     NSLog(@"---didMoveToSuperview");
     if (self.superview != nil) {
         // Manually triggering events that child third-party views/controllers listen to resume operations
+        
+        if ([type  isEqual: @"banner"]) {
+            [moduleImpl loadAndShowBannerAdWithAdId:adId view: _view size: size onLoaderError:^(NSInteger errorCode) {
+                    NSDictionary *error =
+                        @{@"name" : @"LOADED_ERROR",
+                          @"code" : @(errorCode)};
+
+                    NSLog(@"---onLoaderError");
+            } onLoaded:^{
+                NSLog(@"---onLoaded");
+            } onHide:^{
+                NSLog(@"---onHide");
+            } onShowed:^{
+                NSLog(@"---onShowed");
+            } onShowedError:^(NSInteger errorCode) {
+                NSDictionary *error =
+                    @{@"name" : @"LOADED_ERROR",
+                      @"code" : @(errorCode)};
+
+                NSLog(@"---onShowedError");
+            }];
+            return;
+        }
+        
+        if ([type  isEqual: @"native"]) {
+            NSLog(@"---loadAndShowNativeAdWithAdId - size: %@ - adId: %@", size, adId);
+            [moduleImpl loadAndShowNativeAdWithAdId:adId view: _view size: size onLoaderError:^(NSInteger errorCode) {
+                    NSDictionary *error =
+                        @{@"name" : @"LOADED_ERROR",
+                          @"code" : @(errorCode)};
+
+                    NSLog(@"---onLoaderError");
+            } onLoaded:^{
+                NSLog(@"---onLoaded");
+            } onHide:^{
+                NSLog(@"---onHide");
+            } onShowed:^{
+                NSLog(@"---onShowed");
+            } onShowedError:^(NSInteger errorCode) {
+                NSDictionary *error =
+                    @{@"name" : @"LOADED_ERROR",
+                      @"code" : @(errorCode)};
+
+                NSLog(@"---onShowedError");
+            }];
+            return;
+        }
+        
     }
 }
 
@@ -90,14 +134,21 @@ using namespace facebook::react;
 - (void)updateProps:(Props::Shared const &)props oldProps:(Props::Shared const &)oldProps
 {
 NSLog(@"---updateProps");
-  const auto &oldViewProps = *std::static_pointer_cast<PubstarAdViewProps const>(_props);
-  const auto &newViewProps = *std::static_pointer_cast<PubstarAdViewProps const>(props);
+    const auto &oldViewProps = *std::static_pointer_cast<PubstarAdViewProps const>(_props);
+    const auto &newViewProps = *std::static_pointer_cast<PubstarAdViewProps const>(props);
 
-  if (oldViewProps.size != newViewProps.size) {
-//     _nativeCameraView.overlayColor = [NSString stringWithCString:newViewProps.size.c_str() encoding:NSUTF8StringEncoding];
-      
-      NSLog(@"---oldViewProps: %s, newViewProps: %s", oldViewProps.size.c_str(), newViewProps.size.c_str());
-  }
+    if (oldViewProps.size != newViewProps.size) {
+      size = [[NSString alloc] initWithCString:newViewProps.size.c_str() encoding:NSASCIIStringEncoding];
+    }
+    
+    if (oldViewProps.adId != newViewProps.adId) {
+        adId = [[NSString alloc] initWithCString:newViewProps.adId.c_str() encoding:NSASCIIStringEncoding];
+    }
+    
+    if (oldViewProps.type != newViewProps.type) {
+        type = [[NSString alloc] initWithCString:newViewProps.type.c_str() encoding:NSASCIIStringEncoding];
+    }
+    
 
   [super updateProps:props oldProps:oldProps];
 }

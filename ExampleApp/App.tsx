@@ -66,21 +66,23 @@ const App = () => {
       <StatusBar barStyle={'dark-content'} />
 
       <View style={styles.container}>
-        <PubstarAdView
-          adId="1233/99228313580"
-          style={styles.ad}
-          size="small"
-          type="banner"
-          onLoaded={() => {
-            console.log('Banner ad loaded');
-          }}
-          onLoadedError={() => console.log('Banner ad load error')}
-          onShowed={() => {
-            console.log('Banner ad showed');
-          }}
-          onHide={() => console.log('Banner ad hidden')}
-          onShowedError={() => console.log('Banner ad showed error')}
-        />
+        {/* {show && (
+          <PubstarAdView
+            adId="1233/99228313580"
+            style={styles.ad}
+            size="medium"
+            type="banner"
+            onLoaded={() => {
+              console.log('Banner ad loaded');
+            }}
+            onLoadedError={() => console.log('Banner ad load error')}
+            onShowed={() => {
+              console.log('Banner ad showed');
+            }}
+            onHide={() => console.log('Banner ad hidden')}
+            onShowedError={() => console.log('Banner ad showed error')}
+          />
+        )} */}
         {show && (
           <PubstarAdView
             adId="1233/99228313581"
