@@ -34,10 +34,6 @@ class PubstarModule(reactContext: ReactApplicationContext) : NativeRTNPubstarSpe
 
   override fun getName() = NAME
 
-  override fun add(a: Double, b: Double, promise: Promise) {
-    promise.resolve(a + b)
-  }
-
   override fun initialization(promise: Promise) {
     PubStarAdManager.getInstance()
       .setInitAdListener(object : InitAdListener {
@@ -54,7 +50,45 @@ class PubstarModule(reactContext: ReactApplicationContext) : NativeRTNPubstarSpe
       .init(reactApplicationContext)
   }
 
-  override fun loadAndShow(
+    override fun loadAd(adId: String?, onError: Callback?, onLoaded: Callback?) {
+        pubStarAdController.load(
+            reactApplicationContext,
+            adId,
+            object: AdLoaderListener {
+                override fun onError(code: ErrorCode) {
+                    onError(code)
+                }
+
+                override fun onLoaded() {
+                    onLoaded()
+                }
+
+            }
+        )
+    }
+
+    override fun showAd(adId: String?, onHide: Callback?, onShowed: Callback?, onError: Callback?) {
+        pubStarAdController.show(
+            reactApplicationContext,
+            adId,
+            null,
+            object: AdShowedListener {
+                override fun onAdHide(any: RewardModel?) {
+                    onAdHide(any)
+                }
+
+                override fun onAdShowed() {
+                    onAdShowed()
+                }
+
+                override fun onError(code: ErrorCode) {
+                    onError(code)
+                }
+            }
+        )
+    }
+
+    override fun loadAndShow(
       adId: String,
       onLoadError: Callback,
       onLoaded: Callback,
