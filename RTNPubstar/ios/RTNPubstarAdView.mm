@@ -95,25 +95,35 @@ using namespace facebook::react;
         }
         
         if ([type  isEqual: @"native"]) {
-            NSLog(@"---loadAndShowNativeAdWithAdId - size: %@ - adId: %@", size, adId);
             [moduleImpl loadAndShowNativeAdWithAdId:adId view: _view size: size onLoaderError:^(NSInteger errorCode) {
-                    NSDictionary *error =
-                        @{@"name" : @"LOADED_ERROR",
-                          @"code" : @(errorCode)};
-
-                    NSLog(@"---onLoaderError");
+                NSLog(@"---onLoaderError");
+                
+                PubstarAdViewEventEmitter::OnShowedError eventStruct;
+                eventStruct.name = [@"LOADED_ERROR" UTF8String];
+                eventStruct.code = (int)errorCode;
+                self.eventEmitter.onShowedError(eventStruct);
             } onLoaded:^{
                 NSLog(@"---onLoaded");
+                
+                PubstarAdViewEventEmitter::OnLoaded eventStruct;
+                self.eventEmitter.onLoaded(eventStruct);
             } onHide:^{
                 NSLog(@"---onHide");
+                
+                PubstarAdViewEventEmitter::OnHide eventStruct;
+                self.eventEmitter.onHide(eventStruct);
             } onShowed:^{
                 NSLog(@"---onShowed");
+                
+                PubstarAdViewEventEmitter::OnShowed eventStruct;
+                self.eventEmitter.onShowed(eventStruct);
             } onShowedError:^(NSInteger errorCode) {
-                NSDictionary *error =
-                    @{@"name" : @"LOADED_ERROR",
-                      @"code" : @(errorCode)};
-
                 NSLog(@"---onShowedError");
+                
+                PubstarAdViewEventEmitter::OnShowedError eventStruct;
+                eventStruct.name = [@"SHOWED_ERROR" UTF8String];
+                eventStruct.code = (int)errorCode;
+                self.eventEmitter.onShowedError(eventStruct);
             }];
             return;
         }
@@ -133,7 +143,7 @@ using namespace facebook::react;
 // Updating the child view props
 - (void)updateProps:(Props::Shared const &)props oldProps:(Props::Shared const &)oldProps
 {
-NSLog(@"---updateProps");
+    NSLog(@"---updateProps");
     const auto &oldViewProps = *std::static_pointer_cast<PubstarAdViewProps const>(_props);
     const auto &newViewProps = *std::static_pointer_cast<PubstarAdViewProps const>(props);
 
@@ -150,7 +160,7 @@ NSLog(@"---updateProps");
     }
     
 
-  [super updateProps:props oldProps:oldProps];
+    [super updateProps:props oldProps:oldProps];
 }
 //
 //// Emitting event back to JS. This method is called from Swift view
@@ -172,6 +182,11 @@ NSLog(@"---updateProps");
 //{
 //  return static_cast<const CameraNativeComponentEventEmitter &>(*_eventEmitter);
 //}
+
+- (const PubstarAdViewEventEmitter &)eventEmitter
+{
+  return static_cast<const PubstarAdViewEventEmitter &>(*_eventEmitter);
+}
 
 + (ComponentDescriptorProvider)componentDescriptorProvider
 {
