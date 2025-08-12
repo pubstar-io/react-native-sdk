@@ -13,6 +13,7 @@
 #import <react/renderer/components/RTNPubstarSpec/RCTComponentViewHelpers.h>
 
 #import "rtn_pubstar-Swift.h"
+#import "PSRewardParsing.h"
 
 
 using namespace facebook::react;
@@ -22,8 +23,21 @@ inline void emitLoaded(const PubstarAdViewEventEmitter &emitter) {
     emitter.onLoaded(ev);
 }
 
-inline void emitHide(const PubstarAdViewEventEmitter &emitter) {
+inline void emitHide(const PubstarAdViewEventEmitter &emitter, NSDictionary * _Nullable reward) {
     PubstarAdViewEventEmitter::OnHide ev;
+    
+    if (reward != nil) {
+        id typeObj = reward[@"type"];
+        id amountObj = reward[@"amount"];
+
+        if ([typeObj isKindOfClass:NSString.class]) {
+            ev.type = std::string([(NSString *)typeObj UTF8String]);
+        }
+        if ([amountObj isKindOfClass:NSNumber.class]) {
+            ev.amount = (int)[(NSNumber *)amountObj intValue];
+        }
+    }
+    
     emitter.onHide(ev);
 }
 
@@ -99,8 +113,16 @@ inline void emitError(const PubstarAdViewEventEmitter &emitter, const char *name
             emitError(emitter, "LOADED_ERROR", (int)errorCode);
         } onLoaded:^{
             emitLoaded(emitter);
-        } onHide:^{
-            emitHide(emitter);
+        } onHide:^(NSDictionary<NSString *, id> * _Nullable payload) {
+            NSDictionary *args = PSRewardFromPayload(payload);
+            
+            if (!args) {
+                NSLog(@"[Pubstar] onHide without payload2");
+                emitHide(emitter, nil);
+                return;
+            }
+            
+            emitHide(emitter, args);
         } onShowed:^{
             emitShowed(emitter);
         } onShowedError:^(NSInteger errorCode) {
@@ -114,8 +136,16 @@ inline void emitError(const PubstarAdViewEventEmitter &emitter, const char *name
             emitError(emitter, "LOADED_ERROR", (int)errorCode);
         } onLoaded:^{
             emitLoaded(emitter);
-        } onHide:^{
-            emitHide(emitter);
+        } onHide:^(NSDictionary<NSString *, id> * _Nullable payload) {
+            NSDictionary *args = PSRewardFromPayload(payload);
+            
+            if (!args) {
+                NSLog(@"[Pubstar] onHide without payload2");
+                emitHide(emitter, nil);
+                return;
+            }
+            
+            emitHide(emitter, args);
         } onShowed:^{
             emitShowed(emitter);
         } onShowedError:^(NSInteger errorCode) {
@@ -129,14 +159,11 @@ inline void emitError(const PubstarAdViewEventEmitter &emitter, const char *name
 -(void)layoutSubviews
 {
     [super layoutSubviews];
-    NSLog(@"---self.bounds.size.width: %f", self.bounds.size.width);
-    NSLog(@"---self.bounds.size.height: %f", self.bounds.size.height);
     _view.frame = self.bounds;
 }
 
 - (void)updateProps:(Props::Shared const &)props oldProps:(Props::Shared const &)oldProps
 {
-    NSLog(@"---updateProps");
     const auto &oldViewProps = *std::static_pointer_cast<PubstarAdViewProps const>(_props);
     const auto &newViewProps = *std::static_pointer_cast<PubstarAdViewProps const>(props);
 

@@ -1,4 +1,12 @@
+//
+//  RTNPubstar.mm
+//  rtn_pubstar
+//
+//  Created by Mobile  on 10/6/25.
+//
+
 #import "RTNPubstar.h"
+#import "PSRewardParsing.h"
 #import "rtn_pubstar-Swift.h"
 
 @implementation RTNPubstar {
@@ -64,10 +72,16 @@ RCT_EXPORT_MODULE()
       onLoaded:^{
         onLoaded(@[]);
       }
-      onHide:^{
-        NSDictionary *reward = @{@"type" : @"coin", @"amount" : @(0)};
+    onHide:^(NSDictionary<NSString *, id> * _Nullable payload) {
+            NSArray *args = PSRewardArrayFromPayload(payload);
 
-        onAdHide(@[ reward ]);
+            if (!args) {
+              NSLog(@"[Pubstar] onHide without payload2");
+              onAdHide(@[]);
+              return;
+            }
+
+            onAdHide(args);
       }
       onShowed:^{
         onAdShowed(@[]);
@@ -101,10 +115,18 @@ RCT_EXPORT_MODULE()
         onHide:(RCTResponseSenderBlock)onHide
       onShowed:(RCTResponseSenderBlock)onShowed
        onError:(RCTResponseSenderBlock)onError {
-  [moduleImpl showAdWithAdId:adId
-      onHide:^{
-        onHide(@[]);
-      }
+    [moduleImpl showAdWithAdId:adId
+        onHide:^(NSDictionary<NSString *, id> * _Nullable payload) {
+            NSArray *args = PSRewardArrayFromPayload(payload);
+
+            if (!args) {
+                NSLog(@"[Pubstar] onHide without payload2");
+                onHide(@[]);
+                return;
+            }
+
+            onHide(args);
+        }
       onShowed:^{
         onShowed(@[]);
       }

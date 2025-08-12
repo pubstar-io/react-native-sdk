@@ -69,7 +69,7 @@ extension String {
 
     @objc public func showAd(
         adId: String,
-        onHide: @escaping () -> Void,
+        onHide: @escaping ([String: Any]?) -> Void,
         onShowed: @escaping () -> Void,
         onError: @escaping (Int) -> Void
     ) {
@@ -77,7 +77,14 @@ extension String {
             .showAd(
                 adId: adId,
                 onHide: { reward in
-                    onHide()
+                    if let reward = reward {
+                        onHide([
+                            "type": reward.type,
+                            "amount": NSNumber(value: reward.amount)
+                        ])
+                    } else {
+                        onHide(nil)
+                    }
                 },
                 onShowed: {
                     onShowed()
@@ -92,7 +99,7 @@ extension String {
         adId: String,
         onLoadedError: @escaping (Int) -> Void,
         onLoaded: @escaping () -> Void,
-        onHide: @escaping () -> Void,
+        onHide: @escaping ([String: Any]?) -> Void,
         onShowed: @escaping () -> Void,
         onShowedError: @escaping (Int) -> Void
     ) {
@@ -105,7 +112,14 @@ extension String {
                 onLoaded()
             },
             onHide: { reward in
-                onHide()
+                if let reward = reward {
+                    onHide([
+                        "type": reward.type,
+                        "amount": NSNumber(value: reward.amount)
+                    ])
+                } else {
+                    onHide(nil)
+                }
             },
             onShowed: {
                 onShowed()
@@ -123,7 +137,7 @@ extension String {
         size: String,
         onLoaderError: @escaping (Int) -> Void,
         onLoaded: @escaping () -> Void,
-        onHide: @escaping () -> Void,
+        onHide: @escaping ([String: Any]?) -> Void,
         onShowed: @escaping () -> Void,
         onShowedError: @escaping (Int) -> Void
     ) {
@@ -139,7 +153,14 @@ extension String {
                 onLoaded()
             },
             onHide: { reward in
-                onHide()
+                if let reward = reward {
+                    onHide([
+                        "type": reward.type,
+                        "amount": NSNumber(value: reward.amount)
+                    ])
+                } else {
+                    onHide(nil)
+                }
             },
             onShowed: {
                 onShowed()
@@ -156,7 +177,7 @@ extension String {
         size: String,
         onLoaderError: @escaping (Int) -> Void,
         onLoaded: @escaping () -> Void,
-        onHide: @escaping () -> Void,
+        onHide: @escaping ([String: Any]?) -> Void,
         onShowed: @escaping () -> Void,
         onShowedError: @escaping (Int) -> Void
     ) {
@@ -172,7 +193,14 @@ extension String {
                 onLoaded()
             },
             onHide: { reward in
-                onHide()
+                if let reward = reward {
+                    onHide([
+                        "type": reward.type,
+                        "amount": NSNumber(value: reward.amount)
+                    ])
+                } else {
+                    onHide(nil)
+                }
             },
             onShowed: {
                 onShowed()
