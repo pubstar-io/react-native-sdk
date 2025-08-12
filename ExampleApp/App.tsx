@@ -66,7 +66,7 @@ const App = () => {
       <StatusBar barStyle={'dark-content'} />
 
       <View style={styles.container}>
-        {/* {show && (
+        {show && (
           <PubstarAdView
             adId="1233/99228313580"
             style={styles.ad}
@@ -82,7 +82,7 @@ const App = () => {
             onHide={() => console.log('Banner ad hidden')}
             onShowedError={() => console.log('Banner ad showed error')}
           />
-        )} */}
+        )}
         {show && (
           <PubstarAdView
             adId="1233/99228313581"
