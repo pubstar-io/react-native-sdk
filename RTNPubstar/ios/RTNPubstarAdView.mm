@@ -1,4 +1,10 @@
-// RTNPubstarAdView.mm
+//
+//  RTNPubstarAdView.mm
+//  rtn_pubstar
+//
+//  Created by Mobile  on 10/6/25.
+//
+
 #import "RTNPubstarAdView.h"
 
 #import <react/renderer/components/RTNPubstarSpec/ComponentDescriptors.h>
@@ -10,18 +16,6 @@
 
 
 using namespace facebook::react;
-
-@interface RTNPubstarAdView () <RCTPubstarAdViewViewProtocol>
-@end
-
-@implementation RTNPubstarAdView {
-    UIView *_view;
-    PubstarImpl *moduleImpl;
-    NSString *adId;
-    NSString *size;
-    NSString *type;
-}
-
 
 inline void emitLoaded(const PubstarAdViewEventEmitter &emitter) {
     PubstarAdViewEventEmitter::OnLoaded ev;
@@ -45,6 +39,17 @@ inline void emitError(const PubstarAdViewEventEmitter &emitter, const char *name
     emitter.onShowedError(ev);
 }
 
+@interface RTNPubstarAdView () <RCTPubstarAdViewViewProtocol>
+@end
+
+@implementation RTNPubstarAdView {
+    UIView *_view;
+    PubstarImpl *moduleImpl;
+    NSString *adId;
+    NSString *size;
+    NSString *type;
+}
+
 - (instancetype)init
 {
     self = [super init];
@@ -63,16 +68,16 @@ inline void emitError(const PubstarAdViewEventEmitter &emitter, const char *name
         _props = defaultProps;
       
         _view = [[UIView alloc] init];
-        _view.backgroundColor = [UIColor blackColor];
+        _view.backgroundColor = [UIColor whiteColor];
 
         [self addSubview:_view];
-  }
+    }
 
   return self;
 }
 
 - (void)dealloc {
-    
+    moduleImpl = nil;
 }
 
 + (void)load
@@ -83,40 +88,42 @@ inline void emitError(const PubstarAdViewEventEmitter &emitter, const char *name
 
 -(void)didMoveToSuperview {
     NSLog(@"---didMoveToSuperview");
-    if (self.superview != nil) {
-        auto &emitter = self.eventEmitter;
-        
-        if ([type  isEqual: @"banner"]) {
-            [moduleImpl loadAndShowBannerAdWithAdId:adId view: _view size: size onLoaderError:^(NSInteger errorCode) {
-                emitError(emitter, "LOADED_ERROR", (int)errorCode);
-            } onLoaded:^{
-                emitLoaded(emitter);
-            } onHide:^{
-                emitHide(emitter);
-            } onShowed:^{
-                emitShowed(emitter);
-            } onShowedError:^(NSInteger errorCode) {
-                emitError(emitter, "SHOWED_ERROR", (int)errorCode);
-            }];
-            return;
-        }
-        
-        if ([type  isEqual: @"native"]) {
-            [moduleImpl loadAndShowNativeAdWithAdId:adId view: _view size: size onLoaderError:^(NSInteger errorCode) {
-                emitError(emitter, "LOADED_ERROR", (int)errorCode);
-            } onLoaded:^{
-                emitLoaded(emitter);
-            } onHide:^{
-                emitHide(emitter);
-            } onShowed:^{
-                emitShowed(emitter);
-            } onShowedError:^(NSInteger errorCode) {
-                emitError(emitter, "SHOWED_ERROR", (int)errorCode);
-            }];
-            return;
-        }
-        
+    if (self.superview == nil) {
+        return;
     }
+    
+    auto &emitter = self.eventEmitter;
+    
+    if ([type  isEqual: @"banner"]) {
+        [moduleImpl loadAndShowBannerAdWithAdId:adId view: _view size: size onLoaderError:^(NSInteger errorCode) {
+            emitError(emitter, "LOADED_ERROR", (int)errorCode);
+        } onLoaded:^{
+            emitLoaded(emitter);
+        } onHide:^{
+            emitHide(emitter);
+        } onShowed:^{
+            emitShowed(emitter);
+        } onShowedError:^(NSInteger errorCode) {
+            emitError(emitter, "SHOWED_ERROR", (int)errorCode);
+        }];
+        return;
+    }
+    
+    if ([type  isEqual: @"native"]) {
+        [moduleImpl loadAndShowNativeAdWithAdId:adId view: _view size: size onLoaderError:^(NSInteger errorCode) {
+            emitError(emitter, "LOADED_ERROR", (int)errorCode);
+        } onLoaded:^{
+            emitLoaded(emitter);
+        } onHide:^{
+            emitHide(emitter);
+        } onShowed:^{
+            emitShowed(emitter);
+        } onShowedError:^(NSInteger errorCode) {
+            emitError(emitter, "SHOWED_ERROR", (int)errorCode);
+        }];
+        return;
+    }
+    
 }
 
 -(void)layoutSubviews
