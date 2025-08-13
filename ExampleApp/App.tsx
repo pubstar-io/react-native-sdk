@@ -37,28 +37,23 @@ const App = () => {
   }, []);
 
   async function onButtonClick(adId: string) {
-    Pubstar.loadAndShowAd(
-      adId,
-      {
-        onError: errorCode => {
-          console.error('Ad load error:', errorCode);
-        },
-        onLoaded: () => {
-          console.log('Ad loaded successfully');
-        },
+    Pubstar.loadAndShowAd(adId, {
+      onLoadError: errorCode => {
+        console.error('Ad load error:', errorCode);
       },
-      {
-        onAdHide: reward => {
-          console.log('Ad hidden React', reward);
-        },
-        onAdShowed: () => {
-          console.log('Ad showed');
-        },
-        onError: errorCode => {
-          console.error('Ad show error:', errorCode);
-        },
+      onLoaded: () => {
+        console.log('Ad loaded successfully');
       },
-    );
+      onAdHide: reward => {
+        console.log('Ad hidden React', reward);
+      },
+      onAdShowed: () => {
+        console.log('Ad showed React');
+      },
+      onShowError: errorCode => {
+        console.error('Ad show error React:', errorCode);
+      },
+    });
   }
 
   return (

@@ -1,20 +1,16 @@
 import RTNPubstar, { ErrorCode, RewardModel } from "./NativeRTNPubstar";
 
-export interface AdLoaderListener {
-  onError?: (errorCode: ErrorCode) => void;
+interface AdListener {
+  onLoadError?: (errorCode: ErrorCode) => void;
   onLoaded?: () => void;
-}
-
-export interface AdShowListener {
   onAdHide?: (reward: RewardModel | undefined) => void;
   onAdShowed?: () => void;
-  onError?: (errorCode: ErrorCode) => void;
+  onShowError?: (errorCode: ErrorCode) => void;
 }
 
 function loadAndShowAd(
   adId: string,
-  adLoaderListener?: AdLoaderListener,
-  adShowListener?: AdShowListener
+  adListener?: AdListener
 ) {
   if (!RTNPubstar) {
     console.warn("[Pubstar] Native module RTNPubstar not found");
@@ -24,19 +20,19 @@ function loadAndShowAd(
   RTNPubstar.loadAndShow(
     adId,
     (errorCode: ErrorCode) => {
-      adLoaderListener?.onError?.(errorCode);
+      adListener?.onLoadError?.(errorCode);
     },
     () => {
-      adLoaderListener?.onLoaded?.();
+      adListener?.onLoaded?.();
     },
     (reward) => {
-      adShowListener?.onAdHide?.(reward);
+      adListener?.onAdHide?.(reward);
     },
     () => {
-      adShowListener?.onAdShowed?.();
+      adListener?.onAdShowed?.();
     },
     (errorCode: ErrorCode) => {
-      adShowListener?.onError?.(errorCode);
+      adListener?.onShowError?.(errorCode);
     }
   );
 }
