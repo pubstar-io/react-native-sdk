@@ -36,7 +36,7 @@ const App = () => {
     }, 3000);
   }, []);
 
-  async function onButtonClick(adId: string) {
+  async function onLoadAndShow(adId: string) {
     Pubstar.loadAndShowAd(adId, {
       onLoadError: errorCode => {
         console.error('Ad load error:', errorCode);
@@ -52,6 +52,28 @@ const App = () => {
       },
       onShowError: errorCode => {
         console.error('Ad show error React:', errorCode);
+      },
+    });
+  }
+
+  async function onShowLoadThenShow(adId: string) {
+    await Pubstar.loadAd(adId, {
+      onLoadError: errorCode => {
+        console.error('REACT NATIVE: Ad load error:', errorCode);
+      },
+      onLoaded: () => {
+        console.log('REACT NATIVE: Ad loaded successfully');
+      },
+    });
+    Pubstar.showAd(adId, {
+      onAdHide: reward => {
+        console.log('REACT NATIVE: Ad hidden React', reward);
+      },
+      onAdShowed: () => {
+        console.log('REACT NATIVE: Ad showed React');
+      },
+      onShowError: errorCode => {
+        console.error('REACT NATIVE: Ad show error React:', errorCode);
       },
     });
   }
@@ -93,15 +115,15 @@ const App = () => {
         )}
         <Button
           title="Show Interstitial Ad"
-          onPress={() => onButtonClick('1233/99228313582')}
+          onPress={() => onShowLoadThenShow('1233/99228313582')}
         />
         <Button
           title="Show Open Ad"
-          onPress={() => onButtonClick('1233/99228313583')}
+          onPress={() => onLoadAndShow('1233/99228313583')}
         />
         <Button
           title="Show Reward Ad"
-          onPress={() => onButtonClick('1233/99228313584')}
+          onPress={() => onLoadAndShow('1233/99228313584')}
         />
       </View>
     </SafeAreaView>

@@ -1,6 +1,6 @@
 import RTNPubstar, { ErrorCode, RewardModel } from "./NativeRTNPubstar";
 
-interface AdListener {
+interface LoadAndShowListener {
   onLoadError?: (errorCode: ErrorCode) => void;
   onLoaded?: () => void;
   onAdHide?: (reward: RewardModel | undefined) => void;
@@ -8,9 +8,24 @@ interface AdListener {
   onShowError?: (errorCode: ErrorCode) => void;
 }
 
-function loadAndShowAd(adId: string, adListener?: AdListener) {
+interface LoadListener {
+  onLoadError?: (errorCode: ErrorCode) => void;
+  onLoaded?: () => void;
+}
+
+interface ShowListener {
+  onAdHide?: (reward: RewardModel | undefined) => void;
+  onAdShowed?: () => void;
+  onShowError?: (errorCode: ErrorCode) => void;
+}
+
+function showMessagepPackageNotFound() {
+  console.warn("[Pubstar] Native module RTNPubstar not found");
+}
+
+function loadAndShowAd(adId: string, adListener?: LoadAndShowListener) {
   if (!RTNPubstar) {
-    console.warn("[Pubstar] Native module RTNPubstar not found");
+    showMessagepPackageNotFound();
     return;
   }
 
@@ -34,6 +49,45 @@ function loadAndShowAd(adId: string, adListener?: AdListener) {
   );
 }
 
+function loadAd(adId: string, adListener?: LoadListener) {
+  if (!RTNPubstar) {
+    showMessagepPackageNotFound();
+    return;
+  }
+
+  RTNPubstar.loadAd(
+    adId,
+    (errorCode: ErrorCode) => {
+      adListener?.onLoadError?.(errorCode);
+    },
+    () => {
+      adListener?.onLoaded?.();
+    },
+  );
+}
+
+function showAd(adId: string, adListener?: ShowListener) {
+  if (!RTNPubstar) {
+    showMessagepPackageNotFound();
+    return;
+  }
+
+  RTNPubstar.showAd(
+    adId,
+    (reward) => {
+      adListener?.onAdHide?.(reward);
+    },
+    () => {
+      adListener?.onAdShowed?.();
+    },
+    (errorCode: ErrorCode) => {
+      adListener?.onShowError?.(errorCode);
+    },
+  );
+}
+
 export default class Pubstar {
   static loadAndShowAd = loadAndShowAd;
+  static loadAd = loadAd;
+  static showAd = showAd;
 }
