@@ -2,20 +2,20 @@ import type { ViewProps } from "react-native";
 import { codegenNativeComponent } from "react-native/Libraries/Utilities/codegenNativeComponent";
 import type {
   DirectEventHandler,
-  Int32
-} from 'react-native/Libraries/Types/CodegenTypes';
+  Int32,
+} from "react-native/Libraries/Types/CodegenTypes";
 
 type AdErrorEvent = Readonly<{
   name: string;
   code: Int32;
 }>;
 
-
 type AdRewardEvent = Readonly<{
   type: string;
   amount: Int32;
 }>;
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 type AdEvent = Readonly<{}>;
 
 export interface NativeProps extends ViewProps {
