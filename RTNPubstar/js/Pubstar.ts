@@ -8,10 +8,7 @@ interface AdListener {
   onShowError?: (errorCode: ErrorCode) => void;
 }
 
-function loadAndShowAd(
-  adId: string,
-  adListener?: AdListener
-) {
+function loadAndShowAd(adId: string, adListener?: AdListener) {
   if (!RTNPubstar) {
     console.warn("[Pubstar] Native module RTNPubstar not found");
     return;
@@ -33,7 +30,7 @@ function loadAndShowAd(
     },
     (errorCode: ErrorCode) => {
       adListener?.onShowError?.(errorCode);
-    }
+    },
   );
 }
 

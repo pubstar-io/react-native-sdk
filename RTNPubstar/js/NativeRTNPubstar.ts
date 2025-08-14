@@ -29,7 +29,7 @@ export interface Spec extends TurboModule {
     onLoaded: () => void,
     onAdHide: (reward: RewardModel | undefined) => void,
     onAdShowed: () => void,
-    onError: (errorCode: ErrorCode) => void
+    onError: (errorCode: ErrorCode) => void,
   ): void;
 }
 

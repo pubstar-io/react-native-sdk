@@ -33,8 +33,8 @@ const PubstarAdView = ({
   onShowedError,
 }: Props) => {
   const [height, setHeight] = useState(() => {
-    if(Platform.OS === "android") {
-      return 0
+    if (Platform.OS === "android") {
+      return 0;
     }
 
     const heightMap = type === "banner" ? BannerHeight : NativeHeight;
@@ -67,7 +67,7 @@ const PubstarAdView = ({
     <PubstarAdViewNativeComponent
       adId={adId}
       size={size}
-      style={StyleSheet.flatten([style, { height, width: '100%' }])}
+      style={StyleSheet.flatten([style, { height, width: "100%" }])}
       type={type}
       onLoaded={onLoaded}
       onLoadedError={handleOnLoadedError}
