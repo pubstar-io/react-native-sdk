@@ -1,11 +1,8 @@
 package io.rtnpubstar
 
-import android.util.Log
-import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Callback
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.WritableMap
 import io.pubstar.NativeRTNPubstarSpec
 import io.pubstar.mobile.ads.interfaces.AdLoaderListener
 import io.pubstar.mobile.ads.interfaces.AdShowedListener
@@ -26,12 +23,10 @@ class PubstarModule(reactContext: ReactApplicationContext) : NativeRTNPubstarSpe
     PubStarAdManager.getInstance()
       .setInitAdListener(object : InitAdListener {
           override fun onDone() {
-              Log.d("Pubstar", "Init success")
               promise.resolve(null)
           }
 
           override fun onError(code: ErrorCode) {
-              Log.d("Pubstar", "Init error")
               promise.reject("INIT_FAILED", code.name)
           }
       })
@@ -44,11 +39,15 @@ class PubstarModule(reactContext: ReactApplicationContext) : NativeRTNPubstarSpe
             adId,
             object: AdLoaderListener {
                 override fun onError(code: ErrorCode) {
-                    onError(code)
+                    if (onError != null) {
+                        onError(code)
+                    }
                 }
 
                 override fun onLoaded() {
-                    onLoaded()
+                    if (onLoaded != null) {
+                        onLoaded()
+                    }
                 }
 
             }
@@ -62,15 +61,21 @@ class PubstarModule(reactContext: ReactApplicationContext) : NativeRTNPubstarSpe
             null,
             object: AdShowedListener {
                 override fun onAdHide(any: RewardModel?) {
-                    onAdHide(any)
+                    if (onHide != null) {
+                        onHide(any)
+                    }
                 }
 
                 override fun onAdShowed() {
-                    onAdShowed()
+                    if (onShowed != null) {
+                        onShowed()
+                    }
                 }
 
                 override fun onError(code: ErrorCode) {
-                    onError(code)
+                    if (onError != null) {
+                        onError()
+                    }
                 }
             }
         )
