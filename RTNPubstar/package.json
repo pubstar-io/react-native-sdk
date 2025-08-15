@@ -2,9 +2,21 @@
   "name": "rtn-pubstar",
   "version": "1.1.8",
   "description": "Add numbers with Turbo Native Modules",
-  "react-native": "js/index",
   "source": "js/index",
+  "react-native": "js/index",
+  "main": "js/index.ts",
+  "module": "js/index.ts",
+  "exports": {
+    ".": {
+      "react-native": "./js/index.ts",
+      "import": "./js/index.ts",
+      "require": "./js/index.ts",
+      "types": "./js/index.d.ts"
+    },
+    "./package.json": "./package.json"
+  },
   "files": [
+    "js/index.ts",
     "js",
     "android",
     "ios",

@@ -12,8 +12,7 @@ import {
   Button,
   StyleSheet,
 } from 'react-native';
-import Pubstar from 'rtn-pubstar/js/Pubstar';
-import PubstarAdView from 'rtn-pubstar/js/PubstarAdView';
+import Pubstar, { PubstarAdView } from 'rtn-pubstar';
 
 async function initRTNPubstar() {
   try {
