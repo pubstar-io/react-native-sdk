@@ -37,7 +37,7 @@
   "bugs": {
     "url": "https://github.com/pubstar-io/react-native-sdk/issues"
   },
-  "homepage": "https://github.com/pubstar-io/react-native-sdk/blob/README.md",
+  "homepage": "https://github.com/pubstar-io/react-native-sdk#readme",
   "devDependencies": {},
   "peerDependencies": {
     "react": "*",
