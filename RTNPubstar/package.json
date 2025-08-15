@@ -16,7 +16,6 @@
     "./package.json": "./package.json"
   },
   "files": [
-    "js/index.ts",
     "js",
     "android",
     "ios",
