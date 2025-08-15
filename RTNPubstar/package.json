@@ -1,7 +1,7 @@
 {
   "name": "rtn-pubstar",
   "version": "1.1.8",
-  "description": "Add numbers with Turbo Native Modules",
+  "description": "PubStar AD SDK helps developers easily integrate ads into your apps.",
   "source": "js/index",
   "react-native": "js/index",
   "main": "js/index.ts",
@@ -31,13 +31,13 @@
     "ios",
     "android"
   ],
-  "repository": "https://github.com/<your_github_handle>/rtn-pubstar",
-  "author": "<Your Name> <your_email@your_provider.com> (https://github.com/<your_github_handle>)",
+  "repository": "https://github.com/pubstar-io/react-native-sdk",
+  "author": "Pubstar developer developer@tqcsolution.com (https://github.com/pubstar-io/react-native-sdk)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/<your_github_handle>/rtn-pubstar/issues"
+    "url": "https://github.com/pubstar-io/react-native-sdk/issues"
   },
-  "homepage": "https://github.com/<your_github_handle>/rtn-pubstar#readme",
+  "homepage": "https://github.com/pubstar-io/react-native-sdk/blob/README.md",
   "devDependencies": {},
   "peerDependencies": {
     "react": "*",
