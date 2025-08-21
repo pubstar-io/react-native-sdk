@@ -251,7 +251,7 @@ Load ad then show ad, using for Banner ad and Native ad.
 
 ## Release Notes
 
-See the [CHANGELOG.md](https://github.com/pubstar-io/react-native-sdk.git/main/CHANGELOG.md).
+See the [CHANGELOG.md](https://github.com/pubstar-io/react-native-sdk/blob/main/CHANGELOG.md).
 
 ## ID Test AD
 
