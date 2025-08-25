@@ -20,7 +20,7 @@ interface ShowListener {
 }
 
 function showMessagepPackageNotFound() {
-  console.warn("[Pubstar] Native module RTNPubstar not found");
+  throw new Error("Native module RTNPubstar not found");
 }
 
 async function initialization() {
@@ -45,7 +45,7 @@ function loadAd(adId: string, adListener?: LoadListener) {
     },
     () => {
       adListener?.onLoaded?.();
-    },
+    }
   );
 }
 
@@ -65,14 +65,11 @@ function showAd(adId: string, adListener?: ShowListener) {
     },
     (errorCode: ErrorCode) => {
       adListener?.onShowError?.(errorCode);
-    },
+    }
   );
 }
 
-function loadAndShowAd(
-  adId: string,
-  adListener?: LoadAndShowListener
-) {
+function loadAndShowAd(adId: string, adListener?: LoadAndShowListener) {
   if (!RTNPubstar) {
     showMessagepPackageNotFound();
     return;
