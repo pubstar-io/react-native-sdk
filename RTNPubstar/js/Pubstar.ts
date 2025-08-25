@@ -1,4 +1,7 @@
+import { NativeModules } from "react-native";
 import RTNPubstar, { ErrorCode, RewardModel } from "./NativeRTNPubstar";
+
+const NativeRTNPubstar = NativeModules.RTNPubstar;
 
 interface LoadAndShowListener {
   onLoadError?: (errorCode: ErrorCode) => void;
@@ -24,12 +27,23 @@ function showMessagepPackageNotFound() {
 }
 
 async function initialization() {
-  if (!RTNPubstar) {
-    showMessagepPackageNotFound();
-    return;
-  }
+  // if (!RTNPubstar) {
+  //   showMessagepPackageNotFound();
+  //   return;
+  // }
 
-  await RTNPubstar.initialization();
+  console.log(
+    "REACT NATIVE - sdk: NativeRTNPubstar is exist: ",
+    NativeRTNPubstar
+  );
+
+  NativeRTNPubstar.initialization((res: any, error: any) => {
+    console.log(
+      `React Native - sdk: RTNPubstar initializationLegancy called - res: ${res}, error: ${error}`
+    );
+  });
+
+  // await RTNPubstar.initialization();
 }
 
 function loadAd(adId: string, adListener?: LoadListener) {

@@ -13,6 +13,44 @@
   PubstarImpl *moduleImpl;
 }
 
+RCT_EXPORT_MODULE();
+
+RCT_EXPORT_METHOD(initialization: (RCTResponseSenderBlock)callback)
+{
+    if (!moduleImpl) {
+        NSDictionary *error = @{
+            @"code": @"NO_IMPL",
+            @"message": @"Pubstar Module implementation not available"
+        };
+        
+        callback(@[error, [NSNull null]]);
+      return;
+    }
+
+    __block BOOL isCalled = NO;
+
+    [moduleImpl
+        initializationOnDone:^{
+          if (isCalled)
+            return;
+          isCalled = YES;
+
+        callback(@[@YES, [NSNull null]]);
+        }
+        onError:^(NSInteger errorCode) {
+          if (isCalled)
+            return;
+          isCalled = YES;
+        
+            NSDictionary *error = @{
+                @"code": @"INIT_ERROR",
+                @"message": [NSString stringWithFormat:@"Error code: %ld", (long)errorCode]
+            };
+            
+            callback(@[[NSNull null], error]);
+        }];
+}
+
 - (instancetype)init {
   self = [super init];
 
@@ -22,8 +60,6 @@
 
   return self;
 }
-
-RCT_EXPORT_MODULE()
 
 - (void)initialization:(RCTPromiseResolveBlock)resolve
                 reject:(RCTPromiseRejectBlock)reject {
