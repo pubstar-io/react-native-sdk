@@ -13,6 +13,38 @@
   PubstarImpl *moduleImpl;
 }
 
+RCT_EXPORT_MODULE();
+
+RCT_REMAP_METHOD(initialization,
+                 initializationWithResolver:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject)
+{
+    if (!moduleImpl) {
+      reject(@"NO_IMPL", @"Pubstar Module implementation not available", nil);
+      return;
+    }
+
+    __block BOOL isCalled = NO;
+
+    [moduleImpl
+        initializationOnDone:^{
+          if (isCalled)
+            return;
+          isCalled = YES;
+
+        NSLog(@"REACT NATIVE - native: Init success legency");
+        resolve(@YES);
+        }
+        onError:^(NSInteger errorCode) {
+          if (isCalled)
+            return;
+          isCalled = YES;
+            
+        NSString *message = [NSString stringWithFormat:@"Error code: %ld", (long)errorCode];
+                reject(@"INIT_ERROR", message, nil);
+        }];
+}
+
 - (instancetype)init {
   self = [super init];
 
@@ -22,8 +54,6 @@
 
   return self;
 }
-
-RCT_EXPORT_MODULE()
 
 - (void)initialization:(RCTPromiseResolveBlock)resolve
                 reject:(RCTPromiseRejectBlock)reject {
@@ -40,7 +70,7 @@ RCT_EXPORT_MODULE()
           return;
         isCalled = YES;
 
-        NSLog(@"[Pubstar] Init success");
+      NSLog(@"REACT NATIVE - native: Init success new arch");
         resolve(@YES);
       }
       onError:^(NSInteger errorCode) {
