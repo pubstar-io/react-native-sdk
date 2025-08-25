@@ -15,48 +15,10 @@
 
 RCT_EXPORT_MODULE();
 
-RCT_REMAP_METHOD(initialization,
-                 initializationWithResolver:(RCTPromiseResolveBlock)resolve
-                 rejecter:(RCTPromiseRejectBlock)reject)
-{
-    if (!moduleImpl) {
-      reject(@"NO_IMPL", @"Pubstar Module implementation not available", nil);
-      return;
-    }
+#pragma mark - Shared Initialization Logic
 
-    __block BOOL isCalled = NO;
-
-    [moduleImpl
-        initializationOnDone:^{
-          if (isCalled)
-            return;
-          isCalled = YES;
-
-        NSLog(@"REACT NATIVE - native: Init success legency");
-        resolve(@YES);
-        }
-        onError:^(NSInteger errorCode) {
-          if (isCalled)
-            return;
-          isCalled = YES;
-            
-        NSString *message = [NSString stringWithFormat:@"Error code: %ld", (long)errorCode];
-                reject(@"INIT_ERROR", message, nil);
-        }];
-}
-
-- (instancetype)init {
-  self = [super init];
-
-  if (self) {
-    moduleImpl = [PubstarImpl new];
-  }
-
-  return self;
-}
-
-- (void)initialization:(RCTPromiseResolveBlock)resolve
-                reject:(RCTPromiseRejectBlock)reject {
+- (void)performInitializationWithResolve:(RCTPromiseResolveBlock)resolve
+                                  reject:(RCTPromiseRejectBlock)reject {
   if (!moduleImpl) {
     reject(@"NO_IMPL", @"Pubstar Module implementation not available", nil);
     return;
@@ -64,24 +26,34 @@ RCT_REMAP_METHOD(initialization,
 
   __block BOOL isCalled = NO;
 
-  [moduleImpl
-      initializationOnDone:^{
-        if (isCalled)
-          return;
-        isCalled = YES;
+  [moduleImpl initializationOnDone:^{
+      if (isCalled) return;
+      isCalled = YES;
 
-      NSLog(@"REACT NATIVE - native: Init success new arch");
-        resolve(@YES);
-      }
-      onError:^(NSInteger errorCode) {
-        if (isCalled)
-          return;
-        isCalled = YES;
+      NSLog(@"REACT NATIVE - native: Init success");
+      resolve(@YES);
+  } onError:^(NSInteger errorCode) {
+      if (isCalled) return;
+      isCalled = YES;
 
-        reject(@"INIT_ERROR",
-               [NSString stringWithFormat:@"Error code: %ld", (long)errorCode],
-               nil);
-      }];
+      NSString *message = [NSString stringWithFormat:@"Error code: %ld", (long)errorCode];
+      reject(@"INIT_ERROR", message, nil);
+  }];
+}
+
+#pragma mark - Legacy (JS -> NativeModules)
+
+RCT_REMAP_METHOD(initialization,
+                 initializationWithResolver:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject) {
+  [self performInitializationWithResolve:resolve reject:reject];
+}
+
+#pragma mark - New Architecture (JS -> TurboModule)
+
+- (void)initialization:(RCTPromiseResolveBlock)resolve
+                reject:(RCTPromiseRejectBlock)reject {
+  [self performInitializationWithResolve:resolve reject:reject];
 }
 
 - (void)loadAndShow:(NSString *)adId
@@ -173,5 +145,16 @@ RCT_REMAP_METHOD(initialization,
     (const facebook::react::ObjCTurboModule::InitParams &)params {
   return std::make_shared<facebook::react::NativeRTNPubstarSpecJSI>(params);
 }
+
+#pragma mark - Lifecycle
+
+- (instancetype)init {
+  self = [super init];
+  if (self) {
+    moduleImpl = [PubstarImpl new];
+  }
+  return self;
+}
+
 
 @end
