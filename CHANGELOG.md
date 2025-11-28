@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **Reduced overall SDK size**  
   - Optimized internal architecture to significantly reduce the plugin size on both Android and iOS.
-- **Faster initialization performance (`init()`)**  
+- **Faster initialization performance (`initialization()`)**  
   - Improved startup flow and asynchronous handling, resulting in faster SDK initialization.
 - **Improved ad loading speed**  
   - Enhanced the ad loading pipeline, reducing latency and increasing load stability.
