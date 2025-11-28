@@ -15,11 +15,14 @@ import {
 import Pubstar, { PubstarAdView } from 'rtn-pubstar';
 
 async function initRTNPubstar() {
+  console.log('initRTNPubstar called');
   try {
     await Pubstar.initialization();
     console.log('RTNPubstar initialized');
   } catch (error) {
     console.error('Error initializing RTNPubstar:', error);
+  } finally {
+    console.log('initRTNPubstar final called');
   }
 }
 
@@ -137,7 +140,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 16,
+    paddingVertical: 16,
     gap: 16,
   },
   ad: {
