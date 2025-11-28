@@ -2,7 +2,6 @@ package io.rtnpubstar
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import com.facebook.react.bridge.Callback
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
@@ -35,15 +34,10 @@ class PubstarModule(reactContext: ReactApplicationContext) : NativeRTNPubstarSpe
             PubStarAdManager.getInstance()
                 .setInitAdListener(object : InitAdListener {
                     override fun onDone() {
-                        Log.d("[SDK-Native]", "initialization onDane called")
                         promise.resolve(null)
                     }
 
                     override fun onError(code: ErrorCode) {
-                        Log.d(
-                            "[SDK-Native]",
-                            "initialization error: ${code.code} ${code.name} called"
-                        )
                         promise.reject("INIT_FAILED", code.name)
                     }
                 })
