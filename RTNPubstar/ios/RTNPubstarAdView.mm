@@ -12,7 +12,7 @@
 #import <react/renderer/components/RTNPubstarSpec/Props.h>
 #import <react/renderer/components/RTNPubstarSpec/RCTComponentViewHelpers.h>
 
-#import "rtn_pubstar-Swift.h"
+#import "rtn_pubstar/rtn_pubstar-Swift.h"
 #import "PSRewardParsing.h"
 
 
@@ -68,7 +68,6 @@ inline void emitError(const PubstarAdViewEventEmitter &emitter, const char *name
 {
     self = [super init];
     if (self) {
-        NSLog(@"---init: %@", [self description]);
         moduleImpl = [PubstarImpl new];
     }
     return self;
@@ -76,7 +75,6 @@ inline void emitError(const PubstarAdViewEventEmitter &emitter, const char *name
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
-    NSLog(@"---initWithFrame");
     if (self = [super initWithFrame:frame]) {
         static const auto defaultProps = std::make_shared<const PubstarAdViewProps>();
         _props = defaultProps;
@@ -97,11 +95,9 @@ inline void emitError(const PubstarAdViewEventEmitter &emitter, const char *name
 + (void)load
 {
     [super load];
-    NSLog(@"---load");
 }
 
 -(void)didMoveToSuperview {
-    NSLog(@"---didMoveToSuperview");
     if (self.superview == nil) {
         return;
     }
@@ -117,7 +113,6 @@ inline void emitError(const PubstarAdViewEventEmitter &emitter, const char *name
             NSDictionary *args = PSRewardFromPayload(payload);
             
             if (!args) {
-                NSLog(@"[Pubstar] onHide without payload2");
                 emitHide(emitter, nil);
                 return;
             }
@@ -140,7 +135,6 @@ inline void emitError(const PubstarAdViewEventEmitter &emitter, const char *name
             NSDictionary *args = PSRewardFromPayload(payload);
             
             if (!args) {
-                NSLog(@"[Pubstar] onHide without payload2");
                 emitHide(emitter, nil);
                 return;
             }

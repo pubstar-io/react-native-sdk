@@ -22,17 +22,19 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-3940256099942544~1458002511</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
-		<false/>
-		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>We use your data to show personalized ads and improve your experience.</string>
 	<key>RCTNewArchEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
@@ -49,16 +51,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-  <key>GADApplicationIdentifier</key>
-  <string>ca-app-pub-3940256099942544~1458002511</string>
-  <key>NSUserTrackingUsageDescription</key>
-  <string>We use your data to show personalized ads and improve your experience.</string>
-  <key>NSAppTransportSecurity</key>
-  <dict>
-      <key>NSAllowsArbitraryLoads</key>
-      <true/>
-  </dict>
-  <key>io.pubstar.key</key>
-  <string>pub-app-id-1234</string>
+	<key>io.pubstar.key</key>
+	<string>pub-app-id-1256</string>
 </dict>
 </plist>
