@@ -56,24 +56,24 @@ const App = () => {
     });
   }
 
-  async function onShowLoadThenShow(adId: string) {
-    await Pubstar.loadAd(adId, {
+  function onShowLoadThenShow(adId: string) {
+    Pubstar.loadAd(adId, {
       onLoadError: errorCode => {
         console.error('[APP] Ad load error:', errorCode);
       },
       onLoaded: () => {
         console.log('[APP] Ad loaded successfully');
-      },
-    });
-    Pubstar.showAd(adId, {
-      onAdHide: reward => {
-        console.log('[APP] Ad hidden React', reward);
-      },
-      onAdShowed: () => {
-        console.log('[APP] Ad showed React');
-      },
-      onShowError: errorCode => {
-        console.error('[APP] Ad show error React:', errorCode);
+        Pubstar.showAd(adId, {
+          onAdHide: reward => {
+            console.log('[APP] Ad hidden React', reward);
+          },
+          onAdShowed: () => {
+            console.log('[APP] Ad showed React');
+          },
+          onShowError: errorCode => {
+            console.error('[APP] Ad show error React:', errorCode);
+          },
+        });
       },
     });
   }
