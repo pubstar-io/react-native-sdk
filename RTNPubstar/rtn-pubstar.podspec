@@ -13,8 +13,10 @@ Pod::Spec.new do |s|
   s.author          = package["author"]
   s.source          = { :git => package["repository"], :tag => "#{s.version}" }
 
-  s.source_files    = "ios/**/*.{h,m,mm,swift}"
+  s.source_files    = "ios/**/*.{h,m,mm,cpp,swift}"
   s.private_header_files = "ios/**/*.h"
+
+  s.swift_versions = ['5.3']
 
   s.static_framework = true
   s.dependency 'Pubstar', '~> 1.3.1' 
