@@ -1,9 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
 import React, { useEffect, useState } from 'react';
 import {
   SafeAreaView,
@@ -15,16 +9,23 @@ import {
 import Pubstar, { PubstarAdView } from 'rtn-pubstar';
 
 async function initRTNPubstar() {
-  console.log('initRTNPubstar called');
   try {
     await Pubstar.initialization();
-    console.log('RTNPubstar initialized');
+    console.log('[APP] Pubstar.initialization was successed');
   } catch (error) {
-    console.error('Error initializing RTNPubstar:', error);
+    console.error('[APP] Pubstar.initialization was failed with error', error);
   }
 }
 
 initRTNPubstar();
+
+enum PubstarAdId {
+  BANNER = '1256/99228313636',
+  NATIVE = '1256/99228313638',
+  INTERSTITIAL = '1256/99228313634',
+  OPEN = '1256/99228313637',
+  REWARDED = '1233/99228313584',
+}
 
 const App = () => {
   const [show, setShow] = useState(false);
@@ -84,7 +85,7 @@ const App = () => {
       <View style={styles.container}>
         {show && (
           <PubstarAdView
-            adId="1256/99228313636"
+            adId={PubstarAdId.BANNER}
             style={styles.ad}
             size="medium"
             type="banner"
@@ -101,7 +102,7 @@ const App = () => {
         )}
         {show && (
           <PubstarAdView
-            adId="1256/99228313638"
+            adId={PubstarAdId.NATIVE}
             style={styles.ad}
             size="medium"
             type="native"
@@ -114,15 +115,15 @@ const App = () => {
         )}
         <Button
           title="Show Interstitial Ad"
-          onPress={() => onLoadAndShow('1256/99228313634')}
+          onPress={() => onLoadAndShow(PubstarAdId.INTERSTITIAL)}
         />
         <Button
           title="Show Open Ad"
-          onPress={() => onLoadAndShow('1256/99228313637')}
+          onPress={() => onLoadAndShow(PubstarAdId.OPEN)}
         />
         <Button
           title="Show Reward Ad"
-          onPress={() => onLoadAndShow('1233/99228313584')}
+          onPress={() => onLoadAndShow(PubstarAdId.REWARDED)}
         />
       </View>
     </SafeAreaView>
