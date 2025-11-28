@@ -21,8 +21,6 @@ async function initRTNPubstar() {
     console.log('RTNPubstar initialized');
   } catch (error) {
     console.error('Error initializing RTNPubstar:', error);
-  } finally {
-    console.log('initRTNPubstar final called');
   }
 }
 
@@ -40,19 +38,19 @@ const App = () => {
   async function onLoadAndShow(adId: string) {
     Pubstar.loadAndShowAd(adId, {
       onLoadError: errorCode => {
-        console.error('Ad load error:', errorCode);
+        console.error('[APP] Ad load error:', errorCode);
       },
       onLoaded: () => {
-        console.log('Ad loaded successfully');
+        console.log('[APP] Ad loaded successfully');
       },
       onAdHide: reward => {
-        console.log('Ad hidden React', reward);
+        console.log('[APP] Ad hidden React', reward);
       },
       onAdShowed: () => {
-        console.log('Ad showed React');
+        console.log('[APP] Ad showed React');
       },
       onShowError: errorCode => {
-        console.error('Ad show error React:', errorCode);
+        console.error('[APP] Ad show error React:', errorCode);
       },
     });
   }
@@ -60,21 +58,21 @@ const App = () => {
   async function onShowLoadThenShow(adId: string) {
     await Pubstar.loadAd(adId, {
       onLoadError: errorCode => {
-        console.error('REACT NATIVE: Ad load error:', errorCode);
+        console.error('[APP] Ad load error:', errorCode);
       },
       onLoaded: () => {
-        console.log('REACT NATIVE: Ad loaded successfully');
+        console.log('[APP] Ad loaded successfully');
       },
     });
     Pubstar.showAd(adId, {
       onAdHide: reward => {
-        console.log('REACT NATIVE: Ad hidden React', reward);
+        console.log('[APP] Ad hidden React', reward);
       },
       onAdShowed: () => {
-        console.log('REACT NATIVE: Ad showed React');
+        console.log('[APP] Ad showed React');
       },
       onShowError: errorCode => {
-        console.error('REACT NATIVE: Ad show error React:', errorCode);
+        console.error('[APP] Ad show error React:', errorCode);
       },
     });
   }
@@ -86,41 +84,41 @@ const App = () => {
       <View style={styles.container}>
         {show && (
           <PubstarAdView
-            adId="1233/99228313580"
+            adId="1256/99228313636"
             style={styles.ad}
             size="medium"
             type="banner"
             onLoaded={() => {
-              console.log('Banner ad loaded');
+              console.log('[APP] Banner ad loaded');
             }}
-            onLoadedError={() => console.log('Banner ad load error')}
+            onLoadedError={() => console.log('[APP] Banner ad load error')}
             onShowed={() => {
-              console.log('Banner ad showed');
+              console.log('[APP] Banner ad showed');
             }}
-            onHide={() => console.log('Banner ad hidden')}
-            onShowedError={() => console.log('Banner ad showed error')}
+            onHide={() => console.log('[APP] Banner ad hidden')}
+            onShowedError={() => console.log('[APP] Banner ad showed error')}
           />
         )}
         {show && (
           <PubstarAdView
-            adId="1233/99228313581"
+            adId="1256/99228313638"
             style={styles.ad}
             size="medium"
             type="native"
-            onLoaded={() => console.log('Native ad loaded')}
-            onLoadedError={() => console.log('Native ad load error')}
-            onShowed={() => console.log('Native ad showed')}
-            onHide={() => console.log('Native ad hidden')}
-            onShowedError={() => console.log('Native ad showed error')}
+            onLoaded={() => console.log('[APP] Native ad loaded')}
+            onLoadedError={() => console.log('[APP] Native ad load error')}
+            onShowed={() => console.log('[APP] Native ad showed')}
+            onHide={() => console.log('[APP] Native ad hidden')}
+            onShowedError={() => console.log('[APP] Native ad showed error')}
           />
         )}
         <Button
           title="Show Interstitial Ad"
-          onPress={() => onShowLoadThenShow('1233/99228313582')}
+          onPress={() => onLoadAndShow('1256/99228313634')}
         />
         <Button
           title="Show Open Ad"
-          onPress={() => onLoadAndShow('1233/99228313583')}
+          onPress={() => onLoadAndShow('1256/99228313637')}
         />
         <Button
           title="Show Reward Ad"

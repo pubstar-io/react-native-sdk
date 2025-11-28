@@ -7,7 +7,7 @@
 
 #import "RTNPubstar.h"
 #import "PSRewardParsing.h"
-#import "rtn_pubstar-Swift.h"
+#import "rtn_pubstar/rtn_pubstar-Swift.h"
 
 @implementation RTNPubstar {
   PubstarImpl *moduleImpl;
@@ -40,7 +40,6 @@ RCT_EXPORT_MODULE()
           return;
         isCalled = YES;
 
-        NSLog(@"[Pubstar] Init success");
         resolve(@YES);
       }
       onError:^(NSInteger errorCode) {
@@ -76,7 +75,6 @@ RCT_EXPORT_MODULE()
             NSArray *args = PSRewardArrayFromPayload(payload);
 
             if (!args) {
-              NSLog(@"[Pubstar] onHide without payload2");
               onAdHide(@[]);
               return;
             }
@@ -120,7 +118,6 @@ RCT_EXPORT_MODULE()
             NSArray *args = PSRewardArrayFromPayload(payload);
 
             if (!args) {
-                NSLog(@"[Pubstar] onHide without payload2");
                 onHide(@[]);
                 return;
             }
