@@ -1,7 +1,7 @@
 package io.rtnpubstar
 
-import io.pubstar.mobile.core.base.NativeAdRequest
-import io.pubstar.mobile.core.base.BannerAdRequest
+import io.pubstar.mobile.ads.base.NativeAdRequest
+import io.pubstar.mobile.ads.base.BannerAdRequest
 
 data class AdProps(
     var adId: String? = null,

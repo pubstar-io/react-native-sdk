@@ -4,8 +4,8 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.events.Event
 import com.facebook.react.uimanager.events.RCTModernEventEmitter
-import io.pubstar.mobile.core.models.ErrorCode
-import io.pubstar.mobile.core.models.RewardModel
+import io.pubstar.mobile.ads.model.ErrorCode
+import io.pubstar.mobile.ads.model.RewardModel
 
 fun errorCodeToMap(errorCode: ErrorCode): WritableMap {
     val map = Arguments.createMap()

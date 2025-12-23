@@ -126,7 +126,7 @@ extension String {
             },
             onShowedError: { errorCode in
                 onShowedError(errorCode.rawValue)
-            },
+            }
         )
     }
     
@@ -167,7 +167,7 @@ extension String {
             },
             onShowedError: { errorCode in
                 onShowedError(errorCode.rawValue)
-            },
+            }
         )
     }
     
@@ -207,7 +207,7 @@ extension String {
             },
             onShowedError: { errorCode in
                 onShowedError(errorCode.rawValue)
-            },
+            }
         )
     }
 

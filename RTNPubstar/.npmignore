@@ -1,1 +1,9 @@
 node_modules
+.gradle
+.idea
+build
+*.log
+.DS_Store
+local.properties
+*.tgz
+*.tar.gz

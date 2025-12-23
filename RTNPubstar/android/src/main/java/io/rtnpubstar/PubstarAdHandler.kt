@@ -4,14 +4,14 @@ import android.content.Context
 import android.view.View
 import android.widget.FrameLayout
 import android.view.ViewGroup
-import io.pubstar.mobile.core.base.BannerAdRequest
-import io.pubstar.mobile.core.base.NativeAdRequest
-import io.pubstar.mobile.core.interfaces.AdLoaderListener
-import io.pubstar.mobile.core.interfaces.AdShowedListener
-import io.pubstar.mobile.core.interfaces.PubStarAdController
-import io.pubstar.mobile.core.models.ErrorCode
-import io.pubstar.mobile.core.models.RewardModel
-import io.pubstar.mobile.core.api.PubStarAdManager
+import io.pubstar.mobile.ads.base.BannerAdRequest
+import io.pubstar.mobile.ads.base.NativeAdRequest
+import io.pubstar.mobile.ads.interfaces.AdLoaderListener
+import io.pubstar.mobile.ads.interfaces.AdShowedListener
+import io.pubstar.mobile.ads.interfaces.PubStarAdController
+import io.pubstar.mobile.ads.model.ErrorCode
+import io.pubstar.mobile.ads.model.RewardModel
+import io.pubstar.mobile.ads.pub.PubStarAdManager
 
 class PubstarAdHandler {
     private val viewPropsMap = mutableMapOf<View, AdProps>()

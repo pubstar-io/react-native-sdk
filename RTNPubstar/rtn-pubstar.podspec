@@ -24,7 +24,7 @@ Pod::Spec.new do |s|
   }
 
   s.static_framework = true
-  s.dependency 'Pubstar', '~> 1.3.1' 
+  s.dependency 'Pubstar', '~> 1.2.2' 
 
   install_modules_dependencies(s)
 end

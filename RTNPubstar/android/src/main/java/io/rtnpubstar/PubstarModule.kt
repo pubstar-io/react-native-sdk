@@ -6,13 +6,14 @@ import com.facebook.react.bridge.Callback
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import io.pubstar.NativeRTNPubstarSpec
-import io.pubstar.mobile.core.api.PubStarAdManager
-import io.pubstar.mobile.core.interfaces.AdLoaderListener
-import io.pubstar.mobile.core.interfaces.AdShowedListener
-import io.pubstar.mobile.core.interfaces.InitAdListener
-import io.pubstar.mobile.core.interfaces.PubStarAdController
-import io.pubstar.mobile.core.models.ErrorCode
-import io.pubstar.mobile.core.models.RewardModel
+import io.pubstar.mobile.ads.pub.PubStarAdManager
+import io.pubstar.mobile.ads.interfaces.AdLoaderListener
+import io.pubstar.mobile.ads.interfaces.AdShowedListener
+import io.pubstar.mobile.ads.interfaces.InitAdListener
+import io.pubstar.mobile.ads.interfaces.PubStarAdController
+import io.pubstar.mobile.ads.model.ErrorCode
+import io.pubstar.mobile.ads.model.RewardModel
+
 
 class PubstarModule(reactContext: ReactApplicationContext) : NativeRTNPubstarSpec(reactContext) {
     private val pubStarAdController: PubStarAdController by lazy {
