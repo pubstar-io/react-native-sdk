@@ -10,8 +10,8 @@ import com.facebook.react.viewmanagers.PubstarAdViewManagerDelegate
 import com.facebook.react.viewmanagers.PubstarAdViewManagerInterface
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
-import io.pubstar.mobile.ads.model.ErrorCode
-import io.pubstar.mobile.ads.model.RewardModel
+import io.pubstar.mobile.core.models.ErrorCode
+import io.pubstar.mobile.core.models.RewardModel
 
 
 @ReactModule(name = PubstarAdViewManager.NAME)

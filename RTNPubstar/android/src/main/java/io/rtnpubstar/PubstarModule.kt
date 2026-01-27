@@ -5,14 +5,16 @@ import android.os.Looper
 import com.facebook.react.bridge.Callback
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
+import com.google.android.ump.FormError
 import io.pubstar.NativeRTNPubstarSpec
-import io.pubstar.mobile.ads.pub.PubStarAdManager
-import io.pubstar.mobile.ads.interfaces.AdLoaderListener
-import io.pubstar.mobile.ads.interfaces.AdShowedListener
-import io.pubstar.mobile.ads.interfaces.InitAdListener
-import io.pubstar.mobile.ads.interfaces.PubStarAdController
-import io.pubstar.mobile.ads.model.ErrorCode
-import io.pubstar.mobile.ads.model.RewardModel
+import io.pubstar.mobile.core.api.PubStarAdManager
+import io.pubstar.mobile.core.interfaces.AdLoaderListener
+import io.pubstar.mobile.core.interfaces.AdShowedListener
+import io.pubstar.mobile.core.interfaces.InitAdListener
+import io.pubstar.mobile.core.interfaces.PubStarAdController
+import io.pubstar.mobile.core.models.ErrorCode
+import io.pubstar.mobile.core.models.RewardModel
+import io.pubstar.mobile.core.utils.GoogleMobileAdsConsentManager
 
 
 class PubstarModule(reactContext: ReactApplicationContext) : NativeRTNPubstarSpec(reactContext) {
@@ -31,18 +33,34 @@ class PubstarModule(reactContext: ReactApplicationContext) : NativeRTNPubstarSpe
     }
 
     override fun initialization(promise: Promise) {
-        runOnMainThread {
-            PubStarAdManager.getInstance()
-                .setInitAdListener(object : InitAdListener {
-                    override fun onDone() {
-                        promise.resolve(null)
-                    }
 
-                    override fun onError(code: ErrorCode) {
-                        promise.reject("INIT_FAILED", code.name)
+        if (reactApplicationContext.currentActivity == null) {
+            promise.reject("INIT_FAILED", "Context is null")
+            return
+        }
+
+        runOnMainThread {
+
+            PubStarAdManager.gatherConsent(
+                reactApplicationContext.currentActivity,
+                object : GoogleMobileAdsConsentManager.OnConsentGatheringCompleteListener {
+                    override fun consentGatheringComplete(error: FormError?) {
+
+                        PubStarAdManager.getInstance()
+                            .setInitAdListener(object : InitAdListener {
+                                override fun onDone() {
+                                    promise.resolve(null)
+                                }
+
+                                override fun onError(code: ErrorCode) {
+                                    promise.reject("INIT_FAILED", code.name)
+                                }
+                            })
+                            .init(reactApplicationContext)
+
                     }
-                })
-                .init(reactApplicationContext)
+                }
+            );
         }
     }
 
