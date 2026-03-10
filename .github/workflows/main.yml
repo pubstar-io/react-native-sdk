@@ -1,0 +1,93 @@
+name: Publish rtn-pubstar to npmjs
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'RTNPubstar/package.json'
+      - '!RTNPubstar/generated/'
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./RTNPubstar
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Lấy version từ package.json bằng jq
+        run: |
+          # Đọc file package.json và lấy raw text của trường version
+          EXTRACTED_VERSION=$(jq -r .version package.json)
+          
+          # Lưu vào GitHub Environment Variables để dùng ở các bước sau
+          echo "version=$EXTRACTED_VERSION" >> $GITHUB_ENV
+          echo "tag=v$EXTRACTED_VERSION" >> $GITHUB_ENV
+
+      - name: Check if Tag exists
+        id: check_tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_SDK_IOS }}
+        run: |
+          TAG_NAME="${{ steps.pubspec.outputs.tag }}"
+          REMOTE_REPO="pubstar-io/react-native-sdk"
+
+          echo "Checking tag $TAG_NAME on $REMOTE_REPO..."
+
+          if gh api repos/$REMOTE_REPO/git/ref/tags/$TAG_NAME >/dev/null 2>&1; then
+            echo "Tag $TAG_NAME already exists. Skipping publish to avoid error."
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "Tag $TAG_NAME is not exists."
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup Node.js
+        if: steps.check_tag.outputs.exists == 'false'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        if: steps.check_tag.outputs.exists == 'false'
+        run: yarn install --frozen-lockfile
+
+      - name: Zip project source code using git
+        id: zip_step
+        if: steps.check_tag.outputs.exists == 'false'
+        run: |
+          ZIP_NAME="react-native-sdk-${{ steps.pubspec.outputs.version }}.zip"
+
+          git archive -o $ZIP_NAME HEAD
+          echo "zip_file=$ZIP_NAME" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release and upload asset
+        if: steps.check_tag.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          repository: pubstar-io/react-native-sdk
+          tag_name: ${{ steps.pubspec.outputs.tag }}
+          target_commitish: main
+          name: ${{ steps.pubspec.outputs.version }}
+          generate_release_notes: true
+          files: |
+            ${{ steps.zip_project.outputs.zip_file }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_SDK_IOS }}
+
+      - name: Publish to NPM
+        if: steps.check_tag.outputs.exists == 'false'
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
