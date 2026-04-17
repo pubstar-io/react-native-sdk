@@ -6,7 +6,7 @@ import {
   Button,
   StyleSheet,
 } from 'react-native';
-import Pubstar, { PubstarAdView } from 'rtn-pubstar';
+import Pubstar, { NativeCustomConfig, PubstarAdView } from 'rtn-pubstar';
 
 async function initRTNPubstar() {
   try {
@@ -20,11 +20,11 @@ async function initRTNPubstar() {
 initRTNPubstar();
 
 enum PubstarAdId {
-  BANNER = '1241/99228313593',
-  NATIVE = '1241/99228313596',
-  INTERSTITIAL = '1241/99228313594',
-  OPEN = '1241/99228313595',
-  REWARDED = '1241/99228313597',
+  BANNER = '1687/99228314074',
+  NATIVE = '1687/99228314077',
+  INTERSTITIAL = '1687/99228314068',
+  OPEN = '1687/99228314075',
+  REWARDED = '1687/99228314076',
 }
 
 const App = () => {
@@ -83,7 +83,7 @@ const App = () => {
       <StatusBar barStyle={'dark-content'} />
 
       <View style={styles.container}>
-        {show && (
+        {/* {show && (
           <PubstarAdView
             adId={PubstarAdId.BANNER}
             style={styles.ad}
@@ -99,12 +99,20 @@ const App = () => {
             onHide={() => console.log('[APP] Banner ad hidden')}
             onShowedError={() => console.log('[APP] Banner ad showed error')}
           />
-        )}
+        )} */}
         {show && (
           <PubstarAdView
             adId={PubstarAdId.NATIVE}
             style={styles.ad}
-            size="medium"
+            customConfig={new NativeCustomConfig.Builder('AppAdmobNativeCustom')
+              .setAdvertiserTextViewId(1)
+              .setIconImageViewId(2)
+              .setTitleTextViewId(3)
+              .setMediaContentViewGroupId(4)
+              .setBodyTextViewId(5)
+              .setCallToActionButtonId(6)
+              .setLoadingViewId('AppShimmerBanner')
+              .build()}
             type="native"
             onLoaded={() => console.log('[APP] Native ad loaded')}
             onLoadedError={() => console.log('[APP] Native ad load error')}
@@ -144,6 +152,7 @@ const styles = StyleSheet.create({
   },
   ad: {
     backgroundColor: 'lightblue',
+    height: 260,
   },
 });
 

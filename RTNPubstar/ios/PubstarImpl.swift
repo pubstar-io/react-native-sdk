@@ -21,7 +21,7 @@ extension String {
             return .Small
         }
     }
-    
+
     func toBannerAdSize() -> BannerAdRequest.AdTag {
         switch self.lowercased() {
         case "small":
@@ -80,7 +80,7 @@ extension String {
                     if let reward = reward {
                         onHide([
                             "type": reward.type,
-                            "amount": NSNumber(value: reward.amount)
+                            "amount": NSNumber(value: reward.amount),
                         ])
                     } else {
                         onHide(nil)
@@ -115,7 +115,7 @@ extension String {
                 if let reward = reward {
                     onHide([
                         "type": reward.type,
-                        "amount": NSNumber(value: reward.amount)
+                        "amount": NSNumber(value: reward.amount),
                     ])
                 } else {
                     onHide(nil)
@@ -129,8 +129,7 @@ extension String {
             }
         )
     }
-    
-    
+
     @objc public func loadAndShowNativeAd(
         adId: String,
         view: UIView? = nil,
@@ -139,8 +138,14 @@ extension String {
         onLoaded: @escaping () -> Void,
         onHide: @escaping ([String: Any]?) -> Void,
         onShowed: @escaping () -> Void,
-        onShowedError: @escaping (Int) -> Void
+        onShowedError: @escaping (Int) -> Void,
+        customConfig: [String: Any]? = nil
     ) {
+        var config: NativeAdViewBinder? = nil
+        if let customConfig = customConfig {
+            config = NativeAdViewBinder.from(dictionary: customConfig)
+        }
+
         PubstarAdManagerWrapper.loadAndShowNativeAd(
             adId: adId,
             view: view,
@@ -156,7 +161,7 @@ extension String {
                 if let reward = reward {
                     onHide([
                         "type": reward.type,
-                        "amount": NSNumber(value: reward.amount)
+                        "amount": NSNumber(value: reward.amount),
                     ])
                 } else {
                     onHide(nil)
@@ -167,10 +172,11 @@ extension String {
             },
             onShowedError: { errorCode in
                 onShowedError(errorCode.rawValue)
-            }
+            },
+            customConfig: config
         )
     }
-    
+
     @objc public func loadAndShowBannerAd(
         adId: String,
         view: UIView? = nil,
@@ -196,7 +202,7 @@ extension String {
                 if let reward = reward {
                     onHide([
                         "type": reward.type,
-                        "amount": NSNumber(value: reward.amount)
+                        "amount": NSNumber(value: reward.amount),
                     ])
                 } else {
                     onHide(nil)

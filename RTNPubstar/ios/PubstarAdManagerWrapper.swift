@@ -5,35 +5,38 @@
 //  Created by Mobile  on 10/6/25.
 //
 
-import Pubstar
 import AVFoundation
+import Pubstar
 
 @available(iOS 13.0, *)
 public final class PubstarAdManagerWrapper {
     private static let _pubStarAdManager = PubStarAdManager.getInstance()
     private static let _pubStarAdController = PubStarAdManager.getAdController()
-    private static var _context: UIViewController? = PubStarUtils.getHostingViewController()
-    
+    private static var _context: UIViewController? =
+        PubStarUtils.getHostingViewController()
+
     private init() {
-        
+
     }
-    
+
     public static func initPubstar(
         onDone: @escaping () -> Void,
         onError: @escaping (ErrorCode) -> Void
     ) {
         PubStarAdManager.getInstance()
-            .setInitAdListener(InitAdListenerHandler(
-                onDone: {
-                    onDone()
-                },
-                onError: { errorCode in
-                    onError(errorCode)
-                }
-            ))
+            .setInitAdListener(
+                InitAdListenerHandler(
+                    onDone: {
+                        onDone()
+                    },
+                    onError: { errorCode in
+                        onError(errorCode)
+                    }
+                )
+            )
             .initAd()
     }
-    
+
     public static func loadAd(
         adId: String,
         onLoaded: @escaping () -> Void,
@@ -42,20 +45,20 @@ public final class PubstarAdManagerWrapper {
         if _context == nil {
             return
         }
-        
+
         let adNetLoaderListener: AdLoaderListener = AdLoaderHandler {
             onLoaded()
         } onError: { errorCode in
             onError(errorCode)
         }
-        
+
         _pubStarAdController.load(
             context: _context!,
             key: adId,
             adLoaderListener: adNetLoaderListener
         )
     }
-    
+
     public static func showAd(
         adId: String,
         view: UIView? = nil,
@@ -66,7 +69,7 @@ public final class PubstarAdManagerWrapper {
         if _context == nil {
             return
         }
-        
+
         let adShowedListener: AdShowedListener = AdShowedHandler {
             onShowed()
         } onHide: { state in
@@ -74,7 +77,7 @@ public final class PubstarAdManagerWrapper {
         } onError: { errorCode in
             onError(errorCode)
         }
-        
+
         _pubStarAdController.show(
             context: _context!,
             key: adId,
@@ -82,7 +85,7 @@ public final class PubstarAdManagerWrapper {
             adShowedListener: adShowedListener
         )
     }
-    
+
     public static func loadAndShowAd(
         adId: String,
         view: UIView? = nil,
@@ -95,13 +98,13 @@ public final class PubstarAdManagerWrapper {
         if _context == nil {
             return
         }
-        
+
         let adNetLoaderListener: AdLoaderListener = AdLoaderHandler {
             onLoaded()
         } onError: { code in
             onLoadedError(code)
         }
-        
+
         let adNetShowListener: AdShowedListener = AdShowedHandler {
             onShowed()
         } onHide: { state in
@@ -109,7 +112,7 @@ public final class PubstarAdManagerWrapper {
         } onError: { errorCode in
             onShowedError(errorCode)
         }
-        
+
         _pubStarAdController
             .loadAndShow(
                 context: _context!,
@@ -119,7 +122,7 @@ public final class PubstarAdManagerWrapper {
                 adShowedListener: adNetShowListener
             )
     }
-    
+
     public static func loadAndShowNativeAd(
         adId: String,
         view: UIView? = nil,
@@ -129,18 +132,19 @@ public final class PubstarAdManagerWrapper {
         onLoaded: @escaping () -> Void,
         onHide: @escaping (RewardModel?) -> Void,
         onShowed: @escaping () -> Void,
-        onShowedError: @escaping (ErrorCode) -> Void
+        onShowedError: @escaping (ErrorCode) -> Void,
+        customConfig: NativeAdViewBinder? = nil
     ) {
         if _context == nil {
             return
         }
-        
+
         let adNetLoaderListener: AdLoaderListener = AdLoaderHandler {
             onLoaded()
         } onError: { code in
             onLoaderError(code)
         }
-        
+
         let adNetShowListener: AdShowedListener = AdShowedHandler {
             onShowed()
         } onHide: { state in
@@ -148,22 +152,48 @@ public final class PubstarAdManagerWrapper {
         } onError: { errorCode in
             onShowedError(errorCode)
         }
-        
-        let request = NativeAdRequest.Builder(context: _context!)
-            .isAllowLoadNext(isAllowLoadNext)
-            .withView(view)
-            .sizeType(size)
-            .adLoaderListener(adNetLoaderListener)
-            .adShowedListener(adNetShowListener)
-            .build()
-        
+
+        var adRequest: NativeAdRequest
+
+        if customConfig != nil {
+            let customNativeAd = NativeAdViewBinder.Builder(
+                layoutId: customConfig!.layoutId
+            )
+            .setAdvertiserTextViewId(customConfig!.advertiserTextViewId)
+            .setIconImageViewId(customConfig!.iconImageViewId)
+            .setTitleTextViewId(customConfig!.titleTextViewId)
+            .setMediaContentViewGroupId(customConfig!.mediaContentViewGroupId)
+            .setBodyTextViewId(customConfig!.bodyTextViewId)
+            .setCallToActionButtonId(customConfig!.callToActionButtonId)
+            if let loadingView = customConfig!.loadingView {
+                _ = customNativeAd.setLoadingView(loadingView)
+            }
+
+            adRequest = NativeAdRequest.Builder(context: _context!)
+                .isAllowLoadNext(isAllowLoadNext)
+                .withView(view)
+                .withNativeAdViewBinderCustom(customNativeAd.build())
+                .sizeType(.Custom)
+                .adLoaderListener(adNetLoaderListener)
+                .adShowedListener(adNetShowListener)
+                .build()
+        } else {
+            adRequest = NativeAdRequest.Builder(context: _context!)
+                .isAllowLoadNext(isAllowLoadNext)
+                .withView(view)
+                .sizeType(size)
+                .adLoaderListener(adNetLoaderListener)
+                .adShowedListener(adNetShowListener)
+                .build()
+        }
+
         _pubStarAdController
             .loadAndShow(
                 key: adId,
-                adRequest: request
+                adRequest: adRequest
             )
     }
-    
+
     public static func loadAndShowBannerAd(
         adId: String,
         view: UIView? = nil,
@@ -178,13 +208,13 @@ public final class PubstarAdManagerWrapper {
         if _context == nil {
             return
         }
-        
+
         let adNetLoaderListener: AdLoaderListener = AdLoaderHandler {
             onLoaded()
         } onError: { code in
             onLoaderError(code)
         }
-        
+
         let adNetShowListener: AdShowedListener = AdShowedHandler {
             onShowed()
         } onHide: { state in
@@ -192,7 +222,7 @@ public final class PubstarAdManagerWrapper {
         } onError: { errorCode in
             onShowedError(errorCode)
         }
-        
+
         let request = BannerAdRequest.Builder(context: _context!)
             .isAllowLoadNext(isAllowLoadNext)
             .withView(view)
@@ -200,14 +230,14 @@ public final class PubstarAdManagerWrapper {
             .adLoaderListener(adNetLoaderListener)
             .adShowedListener(adNetShowListener)
             .build()
-        
+
         _pubStarAdController
             .loadAndShow(
                 key: adId,
                 adRequest: request
             )
     }
-    
+
     public static func loadAndShowVideoAd(
         adId: String,
         view: UIView? = nil,
@@ -218,17 +248,17 @@ public final class PubstarAdManagerWrapper {
         onShowed: @escaping () -> Void,
         onShowedError: @escaping (ErrorCode) -> Void
 
-    ){
+    ) {
         if _context == nil {
             return
         }
-        
+
         let adNetLoaderListener: AdLoaderListener = AdLoaderHandler {
             onLoaded()
         } onError: { code in
             onLoaderError(code)
         }
-        
+
         let adNetShowListener: AdShowedListener = AdShowedHandler {
             onShowed()
         } onHide: { state in
@@ -236,7 +266,7 @@ public final class PubstarAdManagerWrapper {
         } onError: { errorCode in
             onShowedError(errorCode)
         }
-        
+
         let request = IMARequest.Builder(context: _context!)
             .isAllowCache(true)
             .withView(view)
@@ -244,7 +274,7 @@ public final class PubstarAdManagerWrapper {
             .adLoaderListener(adNetLoaderListener)
             .adShowedListener(adNetShowListener)
             .build()
-        
+
         _pubStarAdController
             .loadAndShow(
                 key: adId,
