@@ -159,20 +159,13 @@ public final class PubstarAdManagerWrapper {
             let customNativeAd = NativeAdViewBinder.Builder(
                 layoutId: customConfig!.layoutId
             )
-            .setAdvertiserTextViewId(customConfig!.advertiserTextViewId)
-            .setIconImageViewId(customConfig!.iconImageViewId)
-            .setTitleTextViewId(customConfig!.titleTextViewId)
-            .setMediaContentViewGroupId(customConfig!.mediaContentViewGroupId)
-            .setBodyTextViewId(customConfig!.bodyTextViewId)
-            .setCallToActionButtonId(customConfig!.callToActionButtonId)
-            if let loadingView = customConfig!.loadingView {
-                _ = customNativeAd.setLoadingView(loadingView)
-            }
+            .apply(config: customConfig!)
+            .build()
 
             adRequest = NativeAdRequest.Builder(context: _context!)
                 .isAllowLoadNext(isAllowLoadNext)
                 .withView(view)
-                .withNativeAdViewBinderCustom(customNativeAd.build())
+                .withNativeAdViewBinderCustom(customNativeAd)
                 .sizeType(.Custom)
                 .adLoaderListener(adNetLoaderListener)
                 .adShowedListener(adNetShowListener)
