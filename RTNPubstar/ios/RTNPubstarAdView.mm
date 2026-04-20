@@ -238,10 +238,10 @@ inline void emitError(const PubstarAdViewEventEmitter &emitter,
     }
     
     NSString *loadingViewIdStr = [[NSString alloc]
-        initWithCString:newViewProps.customConfig.loadingViewId.c_str()
+        initWithCString:newViewProps.customConfig.loadingViewName.c_str()
                encoding:NSUTF8StringEncoding];
     if (loadingViewIdStr && loadingViewIdStr.length > 0) {
-        configDict[@"loadingViewId"] = loadingViewIdStr;
+        configDict[@"loadingViewName"] = loadingViewIdStr;
     }
     customConfigDict = [configDict copy];
 

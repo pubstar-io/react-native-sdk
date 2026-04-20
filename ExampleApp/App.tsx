@@ -111,7 +111,7 @@ const App = () => {
               .setMediaContentViewGroupId(4)
               .setBodyTextViewId(5)
               .setCallToActionButtonId(6)
-              .setLoadingViewId('AppShimmerBanner')
+              .setLoadingViewName('AppShimmerBanner')
               .build()}
             type="native"
             onLoaded={() => console.log('[APP] Native ad loaded')}

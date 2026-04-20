@@ -25,7 +25,7 @@ type CustomConfigType = Readonly<{
   mediaContentViewGroupId?: Int32;
   bodyTextViewId?: Int32;
   callToActionButtonId?: Int32;
-  loadingViewId?: string;
+  loadingViewName?: string;
   adIconImageViewId?: Int32;
   webViewId?: Int32;
   adSocialContextId?: Int32;

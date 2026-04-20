@@ -7,7 +7,7 @@ export class NativeCustomConfig {
     public readonly mediaContentViewGroupId?: number,
     public readonly bodyTextViewId?: number,
     public readonly callToActionButtonId?: number,
-    public readonly loadingViewId?: number,
+    public readonly loadingViewName?: string,
     public readonly adIconImageViewId?: number,
     public readonly webViewId?: number,
     public readonly adSocialContextId?: number,
@@ -21,7 +21,7 @@ export class NativeCustomConfig {
     private mediaContentViewGroupId?: number;
     private bodyTextViewId?: number;
     private callToActionButtonId?: number;
-    private loadingViewId?: string;
+    private loadingViewName?: string;
     private adIconImageViewId?: number;
     private webViewId?: number;
     private adSocialContextId?: number;
@@ -60,8 +60,8 @@ export class NativeCustomConfig {
       return this;
     }
 
-    setLoadingViewId(id: string): this {
-      this.loadingViewId = id;
+    setLoadingViewName(id: string): this {
+      this.loadingViewName = id;
       return this;
     }
 
@@ -81,19 +81,19 @@ export class NativeCustomConfig {
     }
 
     build() {
-      return {
-        layoutName: this.layoutName,
-        advertiserTextViewId: this.advertiserTextViewId,
-        iconImageViewId: this.iconImageViewId,
-        titleTextViewId: this.titleTextViewId,
-        mediaContentViewGroupId: this.mediaContentViewGroupId,
-        bodyTextViewId: this.bodyTextViewId,
-        callToActionButtonId: this.callToActionButtonId,
-        loadingViewId: this.loadingViewId,
-        adIconImageViewId: this.adIconImageViewId,
-        webViewId: this.webViewId,
-        adSocialContextId: this.adSocialContextId,
-      };
+      return new NativeCustomConfig(
+        this.layoutName,
+        this.advertiserTextViewId,
+        this.iconImageViewId,
+        this.titleTextViewId,
+        this.mediaContentViewGroupId,
+        this.bodyTextViewId,
+        this.callToActionButtonId,
+        this.loadingViewName,
+        this.adIconImageViewId,
+        this.webViewId,
+        this.adSocialContextId,
+      )
     }
   };
 }
