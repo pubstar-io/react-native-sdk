@@ -24,10 +24,12 @@ android {
 repositories {
   mavenCentral()
   google()
+  mavenLocal()
 }
 
 dependencies {
   implementation 'com.facebook.react:react-native'
-  implementation 'io.pubstar.mobile:ads:1.5.1'
+  // implementation 'io.pubstar.mobile:ads:1.5.1'
   implementation 'com.google.android.ump:user-messaging-platform:4.0.0'
+  implementation 'stage-io.pubstar.mobile:ads:1.5.1-SNAPSHOT'
 }

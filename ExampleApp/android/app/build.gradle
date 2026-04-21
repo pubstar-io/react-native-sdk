@@ -79,7 +79,7 @@ android {
 
     namespace "com.exampleapp"
     defaultConfig {
-        applicationId "com.exampleapp"
+        applicationId = "com.tqc.oiosend.prod"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -114,6 +114,10 @@ dependencies {
     // The dependencies for Pubstar SDK
     implementation("com.appodeal.ads:sdk:3.4.2.0")
     implementation("com.mbridge.msdk.oversea:mbridge_android_sdk:16.8.81")
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
+    api("com.facebook.shimmer:shimmer:0.5.0")
+//    implementation 'com.google.android.gms:play-services-ads-api:25.1.0'
+//    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")

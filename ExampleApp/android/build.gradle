@@ -10,6 +10,7 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        mavenLocal()
     }
     dependencies {
         classpath("com.android.tools.build:gradle")
@@ -24,6 +25,7 @@ allprojects {
         google()
         mavenCentral()
         maven { url 'https://artifactory.appodeal.com/appodeal' }
+        mavenLocal()
     }
 }
 

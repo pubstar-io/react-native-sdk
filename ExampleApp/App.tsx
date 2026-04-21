@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   SafeAreaView,
   StatusBar,
   View,
   Button,
   StyleSheet,
+  Platform,
 } from 'react-native';
-import Pubstar, { PubstarAdView } from 'rtn-pubstar';
+import Pubstar, { NativeCustomConfig, PubstarAdView } from 'rtn-pubstar';
 
 async function initRTNPubstar() {
   try {
@@ -19,12 +20,20 @@ async function initRTNPubstar() {
 
 initRTNPubstar();
 
-enum PubstarAdId {
-  BANNER = '1241/99228313593',
-  NATIVE = '1241/99228313596',
-  INTERSTITIAL = '1241/99228313594',
-  OPEN = '1241/99228313595',
-  REWARDED = '1241/99228313597',
+enum PubstarAdIdForIOS {
+  BANNER = '1692/99228314092',
+  NATIVE = '1692/99228314093',
+  INTERSTITIAL = '1692/99228314089',
+  OPEN = '1692/99228314090',
+  REWARDED = '1692/99228314091',
+}
+
+enum PubstarAdIdForAndroid {
+  BANNER = '1687/99228314074',
+  NATIVE = '1687/99228314077',
+  INTERSTITIAL = '1687/99228314068',
+  OPEN = '1687/99228314075',
+  REWARDED = '1687/99228314076',
 }
 
 const App = () => {
@@ -34,6 +43,14 @@ const App = () => {
     setTimeout(() => {
       setShow(true);
     }, 3000);
+  }, []);
+
+  const PubstarAdId = useMemo(() => {
+    if (Platform.OS === 'ios') {
+      return PubstarAdIdForIOS;
+    }
+
+    return PubstarAdIdForAndroid;
   }, []);
 
   async function onLoadAndShow(adId: string) {
@@ -78,6 +95,31 @@ const App = () => {
     });
   }
 
+  const customConfig = useMemo(() => {
+    if (Platform.OS === 'android') {
+      return new NativeCustomConfig.Builder('pubstar_applovin_native_big')
+        .setAdvertiserTextViewId('ad_advertiser')
+        .setIconImageViewId('ad_logo')
+        .setTitleTextViewId('ad_headline')
+        .setMediaContentViewGroupId('ad_media')
+        .setBodyTextViewId('ad_body')
+        .setCallToActionButtonId('ad_call_to_action')
+        .setLoadingViewName('pubstar_shimmer_native_big')
+        .setCtaColorHex('#FFFFFF')
+        .build();
+    }
+
+    return new NativeCustomConfig.Builder('AppAdmobNativeCustom')
+      .setAdvertiserTextViewId('1')
+      .setIconImageViewId('2')
+      .setTitleTextViewId('3')
+      .setMediaContentViewGroupId('4')
+      .setBodyTextViewId('5')
+      .setCallToActionButtonId('6')
+      .setLoadingViewName('AppShimmerBanner')
+      .build();
+  }, []);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle={'dark-content'} />
@@ -87,7 +129,7 @@ const App = () => {
           <PubstarAdView
             adId={PubstarAdId.BANNER}
             style={styles.ad}
-            size="medium"
+            size="small"
             type="banner"
             onLoaded={() => {
               console.log('[APP] Banner ad loaded');
@@ -105,6 +147,7 @@ const App = () => {
             adId={PubstarAdId.NATIVE}
             style={styles.ad}
             size="medium"
+            customConfig={customConfig}
             type="native"
             onLoaded={() => console.log('[APP] Native ad loaded')}
             onLoadedError={() => console.log('[APP] Native ad load error')}
