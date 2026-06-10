@@ -29,7 +29,7 @@ class PubstarPackage : BaseReactPackage() {
     }
 
     override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> =
-        listOf(PubstarAdViewManager())
+        listOf(PubstarAdViewManager(), PubstarAdVideoViewManager())
 
     override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> =
         emptyList()
