@@ -8,13 +8,14 @@ const BannerHeight = { small: 78, medium: 130, large: 260 };
 const NativeHeight = { small: 78, medium: 130, large: 299 };
 
 type PubstarAdSize = "small" | "medium" | "large";
-type PubstarAdType = "banner" | "native";
+type PubstarAdType = "banner" | "native" | "video" | "videoInStream" | "videoOutStream";
 
 interface Props {
   adId: string;
   style?: StyleProp<ViewStyle>;
   size?: PubstarAdSize;
   type: PubstarAdType;
+  media?: string;
   customConfig?: NativeCustomConfig;
   onLoaded?: () => void;
   onLoadedError?: (errorCode: ErrorCode) => void;
@@ -28,6 +29,7 @@ const PubstarAdView = ({
   size = "small",
   style,
   type,
+  media,
   customConfig,
   onLoaded,
   onLoadedError,
@@ -88,6 +90,7 @@ const PubstarAdView = ({
       size={size}
       style={StyleSheet.flatten([{ height, width: "100%" }, style])}
       type={type}
+      media={media}
       customConfig={customConfig}
       onLoaded={onLoaded}
       onLoadedError={handleOnLoadedError}

@@ -8,7 +8,7 @@ const BannerHeight = { small: 78, medium: 130, large: 260 };
 const NativeHeight = { small: 78, medium: 130, large: 299 };
 
 type PubstarAdSize = "small" | "medium" | "large";
-type PubstarAdType = "banner" | "native";
+type PubstarAdType = "banner" | "native" | "video";
 
 interface Props {
   adId: string;
@@ -50,7 +50,7 @@ const PubstarAdVideoView = ({
       return NativeHeight[size] ?? NativeHeight.small;
     }
 
-    return NativeHeight.small;
+    return NativeHeight.large;
   }
 
   const [height, setHeight] = useState(() => {

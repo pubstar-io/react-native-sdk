@@ -6,8 +6,13 @@ import {
   Button,
   StyleSheet,
   Platform,
+  ScrollView,
 } from 'react-native';
-import Pubstar, { NativeCustomConfig, PubstarAdView } from 'rtn-pubstar';
+import Pubstar, {
+  NativeCustomConfig,
+  PubstarAdVideoView,
+  PubstarAdView,
+} from 'rtn-pubstar';
 
 async function initRTNPubstar() {
   try {
@@ -26,6 +31,7 @@ enum PubstarAdIdForIOS {
   INTERSTITIAL = '1692/99228314089',
   OPEN = '1692/99228314090',
   REWARDED = '1692/99228314091',
+  VIDEO = '1687/99228314138',
 }
 
 enum PubstarAdIdForAndroid {
@@ -34,6 +40,7 @@ enum PubstarAdIdForAndroid {
   INTERSTITIAL = '1687/99228314068',
   OPEN = '1687/99228314075',
   REWARDED = '1687/99228314076',
+  VIDEO = '1692/99228314124',
 }
 
 const App = () => {
@@ -124,51 +131,68 @@ const App = () => {
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle={'dark-content'} />
 
-      <View style={styles.container}>
-        {show && (
-          <PubstarAdView
-            adId={PubstarAdId.BANNER}
-            style={styles.ad}
-            size="small"
-            type="banner"
-            onLoaded={() => {
-              console.log('[APP] Banner ad loaded');
-            }}
-            onLoadedError={() => console.log('[APP] Banner ad load error')}
-            onShowed={() => {
-              console.log('[APP] Banner ad showed');
-            }}
-            onHide={() => console.log('[APP] Banner ad hidden')}
-            onShowedError={() => console.log('[APP] Banner ad showed error')}
+      <ScrollView>
+        <View style={styles.container}>
+          {show && (
+            <PubstarAdView
+              adId={PubstarAdId.BANNER}
+              style={styles.ad}
+              size="small"
+              type="banner"
+              onLoaded={() => {
+                console.log('[APP] Banner ad loaded');
+              }}
+              onLoadedError={() => console.log('[APP] Banner ad load error')}
+              onShowed={() => {
+                console.log('[APP] Banner ad showed');
+              }}
+              onHide={() => console.log('[APP] Banner ad hidden')}
+              onShowedError={() => console.log('[APP] Banner ad showed error')}
+            />
+          )}
+          {show && (
+            <PubstarAdView
+              adId={PubstarAdId.NATIVE}
+              style={styles.ad}
+              size="medium"
+              customConfig={customConfig}
+              type="native"
+              onLoaded={() => console.log('[APP] Native ad loaded')}
+              onLoadedError={() => console.log('[APP] Native ad load error')}
+              onShowed={() => console.log('[APP] Native ad showed')}
+              onHide={() => console.log('[APP] Native ad hidden')}
+              onShowedError={() => console.log('[APP] Native ad showed error')}
+            />
+          )}
+          {show && (
+            <PubstarAdView
+              adId={PubstarAdId.VIDEO}
+              style={styles.ad}
+              size="medium"
+              customConfig={customConfig}
+              type="videoInStream"
+              media="https://storage.googleapis.com/gvabox/media/samples/stock.mp4"
+              onLoaded={() => console.log('[APP] Video ad loaded')}
+              onLoadedError={() => console.log('[APP] Video ad load error')}
+              onShowed={() => console.log('[APP] Video ad showed')}
+              onHide={() => console.log('[APP] Video ad hidden')}
+              onShowedError={() => console.log('[APP] Video ad showed error')}
+            />
+          )}
+          <Button
+            title="Show Interstitial Ad"
+            onPress={() => onLoadAndShow(PubstarAdId.INTERSTITIAL)}
           />
-        )}
-        {show && (
-          <PubstarAdView
-            adId={PubstarAdId.NATIVE}
-            style={styles.ad}
-            size="medium"
-            customConfig={customConfig}
-            type="native"
-            onLoaded={() => console.log('[APP] Native ad loaded')}
-            onLoadedError={() => console.log('[APP] Native ad load error')}
-            onShowed={() => console.log('[APP] Native ad showed')}
-            onHide={() => console.log('[APP] Native ad hidden')}
-            onShowedError={() => console.log('[APP] Native ad showed error')}
+          <Button
+            title="Show Open Ad"
+            onPress={() => onLoadAndShow(PubstarAdId.OPEN)}
           />
-        )}
-        <Button
-          title="Show Interstitial Ad"
-          onPress={() => onLoadAndShow(PubstarAdId.INTERSTITIAL)}
-        />
-        <Button
-          title="Show Open Ad"
-          onPress={() => onLoadAndShow(PubstarAdId.OPEN)}
-        />
-        <Button
-          title="Show Reward Ad"
-          onPress={() => onLoadAndShow(PubstarAdId.REWARDED)}
-        />
-      </View>
+          <Button
+            title="Show Reward Ad"
+            onPress={() => onLoadAndShow(PubstarAdId.REWARDED)}
+          />
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -187,6 +211,7 @@ const styles = StyleSheet.create({
   },
   ad: {
     backgroundColor: 'lightblue',
+    height: 200,
   },
 });
 

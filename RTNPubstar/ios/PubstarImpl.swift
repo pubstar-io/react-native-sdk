@@ -216,5 +216,49 @@ extension String {
             }
         )
     }
+    
+    @objc public func loadAndShowVideoAd(
+        adId: String,
+        view: UIView? = nil,
+        size: String,
+        type: String,
+        media: String? = nil,
+        onLoaderError: @escaping (Int) -> Void,
+        onLoaded: @escaping () -> Void,
+        onHide: @escaping ([String: Any]?) -> Void,
+        onShowed: @escaping () -> Void,
+        onShowedError: @escaping (Int) -> Void
+    ) {
+        PubstarAdManagerWrapper.loadAndShowVideoAd(
+            adId: adId,
+            view: view,
+            tag: size.toBannerAdSize(),
+            type: type,
+            media: media,
+            isAllowLoadNext: false,
+            onLoaderError: { errorCode in
+                onLoaderError(errorCode.rawValue)
+            },
+            onLoaded: {
+                onLoaded()
+            },
+            onHide: { reward in
+                if let reward = reward {
+                    onHide([
+                        "type": reward.type,
+                        "amount": NSNumber(value: reward.amount),
+                    ])
+                } else {
+                    onHide(nil)
+                }
+            },
+            onShowed: {
+                onShowed()
+            },
+            onShowedError: { errorCode in
+                onShowedError(errorCode.rawValue)
+            }
+        )
+    }
 
 }

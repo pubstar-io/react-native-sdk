@@ -1,6 +1,8 @@
 package io.rtnpubstar
 
 import android.content.Context
+import android.media.MediaPlayer
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
@@ -14,8 +16,10 @@ import io.pubstar.mobile.core.interfaces.PubStarAdController
 import io.pubstar.mobile.core.models.ErrorCode
 import io.pubstar.mobile.core.models.RewardModel
 import io.pubstar.mobile.core.api.PubStarAdManager
+import io.pubstar.mobile.core.base.IMARequest
 import io.pubstar.mobile.core.base.NativeAdViewBinder
 import kotlin.String
+import android.widget.VideoView
 
 data class NativeCustomConfig(
     val layoutName: String,
@@ -112,27 +116,34 @@ class PubstarAdHandler {
     ) {
         val adNetShowListener = object : AdShowedListener {
             override fun onAdShowed() {
+                Log.d("[TEST]", "[PubstarAdHandle][adNetShowListener] onAdShowed was called")
                 onShowed()
             }
 
             override fun onAdHide(any: RewardModel?) {
+                Log.d("[TEST]", "[PubstarAdHandle][adNetShowListener] onAdHide was called")
                 onHide(any)
             }
 
             override fun onError(code: ErrorCode) {
+                Log.d("[TEST]", "[PubstarAdHandle][adNetShowListener] onError: ${code.code} - ${code.name}")
                 onShowedError(code)
             }
         }
 
         val adNetLoaderListener = object : AdLoaderListener {
             override fun onLoaded() {
+                Log.d("[TEST]", "[PubstarAdHandle][adNetLoaderListener] onLoaded was called")
                 onLoaded()
             }
 
             override fun onError(code: ErrorCode) {
+                Log.d("[TEST]", "[PubstarAdHandle][adNetLoaderListener] onError: ${code.code} - ${code.name}")
                 onLoadedError(code)
             }
         }
+
+        Log.d("[TEST]", "[PubstarAdHandle][loadAndShowWhenReady] type is: ${data.type}")
 
         when (data.type) {
             "banner" -> {
@@ -155,6 +166,18 @@ class PubstarAdHandler {
                     adLoaderListener = adNetLoaderListener,
                     adShowListener = adNetShowListener,
                     customConfig = data.customConfig
+                )
+            }
+
+            "video" -> {
+                loadAndShowVideo(
+                    context = context,
+                    view = view,
+                    adId = data.adId!!,
+                    media = "https://storage.googleapis.com/gvabox/media/samples/stock.mp4",
+                    type = IMARequest.Type.OUT_STREAM,
+                    adLoaderListener = adNetLoaderListener,
+                    adShowListener = adNetShowListener
                 )
             }
         }
@@ -200,6 +223,62 @@ class PubstarAdHandler {
             .build()
 
         pubStarAdController.loadAndShow(adId, requestNative)
+    }
+
+
+    private fun loadAndShowVideo(
+        context: Context,
+        view: ViewGroup,
+        adId: String,
+        media: String,
+        type: IMARequest.Type,
+        adLoaderListener: AdLoaderListener,
+        adShowListener: AdShowedListener
+    ) {
+        val request = IMARequest.Builder(context)
+            .withView(view)
+            .withSize(IMARequest.Size.Medium)
+            .withType(type)
+            .adLoaderListener(adLoaderListener)
+            .adShowedListener(adShowListener)
+
+        if (type == IMARequest.Type.IN_STREAM) {
+            this.createVideoForInStreamAds(
+                context = context,
+                containerView = view,
+                path = media,
+                callback = { player ->
+                    request.withMedia(player)
+                }
+            )
+        }
+
+        pubStarAdController.loadAndShow(adId, request.build())
+    }
+
+
+    private fun createVideoForInStreamAds(
+        context: Context,
+        containerView: ViewGroup,
+        path: String,
+        callback: (mediaPlayer: MediaPlayer) -> Unit
+    ) {
+        val videoPlayer = VideoView(context)
+
+        val layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+        videoPlayer.layoutParams = layoutParams
+        containerView.addView(videoPlayer)
+
+        videoPlayer.setVideoPath(path)
+        videoPlayer.setOnPreparedListener { mp ->
+            mp.isLooping = false
+            videoPlayer.start()
+
+            callback(mp)
+        }
     }
 
     private fun buildNativeAdViewBinder(

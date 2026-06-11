@@ -63,6 +63,7 @@ inline void emitError(const PubstarAdViewEventEmitter &emitter,
     NSString *adId;
     NSString *size;
     NSString *type;
+    NSString *media;
     NSDictionary *customConfigDict;
 }
 
@@ -163,6 +164,37 @@ inline void emitError(const PubstarAdViewEventEmitter &emitter,
         ];
         return;
     }
+    
+    if ([type isEqual:@"videoInStream"] || [type isEqual:@"videoOutStream"]) {
+        [moduleImpl loadAndShowVideoAdWithAdId:adId
+            view:_view
+            size:size
+            type: type
+            media: media
+            onLoaderError:^(NSInteger errorCode) {
+              emitError(emitter, "LOADED_ERROR", (int)errorCode);
+            }
+            onLoaded:^{
+              emitLoaded(emitter);
+            }
+            onHide:^(NSDictionary<NSString *, id> *_Nullable payload) {
+              NSDictionary *args = PSRewardFromPayload(payload);
+
+              if (!args) {
+                  emitHide(emitter, nil);
+                  return;
+              }
+
+              emitHide(emitter, args);
+            }
+            onShowed:^{
+              emitShowed(emitter);
+            }
+            onShowedError:^(NSInteger errorCode) {
+              emitError(emitter, "SHOWED_ERROR", (int)errorCode);
+            }];
+        return;
+    }
 }
 
 - (void)layoutSubviews {
@@ -189,6 +221,11 @@ inline void emitError(const PubstarAdViewEventEmitter &emitter,
 
     if (oldViewProps.type != newViewProps.type) {
         type = [[NSString alloc] initWithCString:newViewProps.type.c_str()
+                                        encoding:NSASCIIStringEncoding];
+    }
+
+    if (oldViewProps.media != newViewProps.media) {
+        media = [[NSString alloc] initWithCString:newViewProps.media.c_str()
                                         encoding:NSASCIIStringEncoding];
     }
 

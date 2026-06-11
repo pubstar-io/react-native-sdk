@@ -23,18 +23,29 @@ public final class PubstarAdManagerWrapper {
         onDone: @escaping () -> Void,
         onError: @escaping (ErrorCode) -> Void
     ) {
-        PubStarAdManager.getInstance()
-            .setInitAdListener(
-                InitAdListenerHandler(
-                    onDone: {
-                        onDone()
-                    },
-                    onError: { errorCode in
-                        onError(errorCode)
-                    }
-                )
-            )
-            .initAd()
+        guard let context = _context else {
+            onError(ErrorCode.NO_INIT)
+            return
+        }
+
+        PubStarAdManager.gatherConsent(
+            from: context,
+            listener: ConsentGatheringCompleteHandler(onComplete: { error in
+                PubStarAdManager.getInstance()
+                    .setIsDebug(isDebug: true)
+                    .setInitAdListener(
+                        InitAdListenerHandler(
+                            onDone: {
+                                onDone()
+                            },
+                            onError: { errorCode in
+                                onError(errorCode)
+                            }
+                        )
+                    )
+                    .initAd()
+            })
+        )
     }
 
     public static func loadAd(
@@ -234,7 +245,10 @@ public final class PubstarAdManagerWrapper {
     public static func loadAndShowVideoAd(
         adId: String,
         view: UIView? = nil,
-        media: AVPlayer,
+        tag: BannerAdRequest.AdTag,
+        type: String,
+        media: String? = nil,
+        isAllowLoadNext: Bool = true,
         onLoaderError: @escaping (ErrorCode) -> Void,
         onLoaded: @escaping () -> Void,
         onHide: @escaping (RewardModel?) -> Void,
@@ -242,10 +256,6 @@ public final class PubstarAdManagerWrapper {
         onShowedError: @escaping (ErrorCode) -> Void
 
     ) {
-        if _context == nil {
-            return
-        }
-
         let adNetLoaderListener: AdLoaderListener = AdLoaderHandler {
             onLoaded()
         } onError: { code in
@@ -260,15 +270,162 @@ public final class PubstarAdManagerWrapper {
             onShowedError(errorCode)
         }
 
-        let request = IMARequest.Builder(context: _context!)
+        guard let view = view, let context = _context else {
+            return
+        }
+
+        switch type {
+        case "videoInStream":
+            guard let mediaContent = media else {
+                onLoaderError(ErrorCode.NO_VIEW_TO_ATTACH)
+                return
+            }
+            
+            let inStream = InStreamIMA(
+                urlString: mediaContent,
+                view: view,
+                context: context,
+                loadListener: adNetLoaderListener,
+                showListener: adNetShowListener
+            )
+            inStream.tringer(
+                pubStarController: _pubStarAdController,
+                adId: adId
+            )
+            break
+        case "videoOutStream":
+            let outStream = OutStreamIMA(
+                view: view,
+                context: context,
+                loadListener: adNetLoaderListener,
+                showListener: adNetShowListener
+            )
+            outStream.tringer(
+                pubStarController: _pubStarAdController,
+                adId: adId
+            )
+            break
+        default:
+            break
+        }
+    }
+}
+
+class InStreamIMA {
+    private var urlPath: String
+    private var view: UIView
+    private var context: UIViewController
+    private var adNetLoaderListener: AdLoaderListener
+    private var adNetShowListener: AdShowedListener
+
+    init(
+        urlString: String,
+        view: UIView,
+        context: UIViewController,
+        loadListener: AdLoaderListener,
+        showListener: AdShowedListener
+    ) {
+        self.urlPath = urlString
+        self.view = view
+        self.context = context
+        self.adNetLoaderListener = loadListener
+        self.adNetShowListener = showListener
+    }
+
+    func tringer(pubStarController: PubStarAdController, adId: String) {
+        DispatchQueue.main.async {
+            guard let player = self.createPlayerVideo() else {
+                self.adNetLoaderListener.onError(code: ErrorCode.SHOW_ERROR)
+                return
+            }
+
+            let _ = self.createVideoView(
+                containerVideo: self.view,
+                player: player
+            )
+
+            player.play()
+
+            let request = IMARequest.Builder(context: self.context)
+                .isAllowCache(true)
+                .withView(self.view)
+                .withMedia(player)
+                .withType(.inStream)
+                .adLoaderListener(self.adNetLoaderListener)
+                .adShowedListener(self.adNetShowListener)
+                .build()
+
+            pubStarController
+                .loadAndShow(
+                    key: adId,
+                    adRequest: request
+                )
+        }
+    }
+
+    private func createPlayerVideo() -> AVPlayer? {
+        guard
+            let url = URL(
+                string: urlPath
+            )
+        else {
+            return nil
+        }
+
+        let player = AVPlayer(url: url)
+        player.isMuted = true
+        player.actionAtItemEnd = .none
+
+        return player
+    }
+
+    private func createVideoView(
+        containerVideo: UIView,
+        player: AVPlayer
+    ) -> UIView {
+        let playerLayer: AVPlayerLayer = AVPlayerLayer(player: player)
+        playerLayer.frame = containerVideo.bounds
+        playerLayer.videoGravity = .resizeAspect
+
+        containerVideo.layer.sublayers?.forEach {
+            $0.removeFromSuperlayer()
+        }
+
+        containerVideo.layer.insertSublayer(playerLayer, at: 0)
+
+        return containerVideo
+    }
+}
+
+class OutStreamIMA {
+    private var view: UIView
+    private var context: UIViewController
+    private var adNetLoaderListener: AdLoaderListener
+    private var adNetShowListener: AdShowedListener
+
+    init(
+        view: UIView,
+        context: UIViewController,
+        loadListener: AdLoaderListener,
+        showListener: AdShowedListener
+    ) {
+        self.view = view
+        self.context = context
+        self.adNetLoaderListener = loadListener
+        self.adNetShowListener = showListener
+    }
+
+    func tringer(pubStarController: PubStarAdController, adId: String) {
+        let request = IMARequest.Builder(context: self.context)
             .isAllowCache(true)
-            .withView(view)
-            .withMedia(media)
-            .adLoaderListener(adNetLoaderListener)
-            .adShowedListener(adNetShowListener)
+            .withView(self.view)
+            .withType(.outStream)
+            .withSize(.medium)
+            .adLoaderListener(self.adNetLoaderListener)
+            .adShowedListener(self.adNetShowListener)
             .build()
 
-        _pubStarAdController
+        pubStarController
             .loadAndShow(
                 key: adId,
                 adRequest: request

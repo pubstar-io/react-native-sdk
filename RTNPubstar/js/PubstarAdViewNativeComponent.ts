@@ -31,6 +31,7 @@ type CustomConfigType = Readonly<{
 export interface NativeProps extends ViewProps {
   adId: string;
   type: string;
+  media?: string;
   size?: string;
   customConfig?: CustomConfigType;
   onLoaded?: DirectEventHandler<AdEvent>;

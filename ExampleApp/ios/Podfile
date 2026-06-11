@@ -14,11 +14,11 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
-pod 'Pubstar', :path => '/Users/mobile/Developments/sdk/PubStar-SDK/ios-sdk/Pubstar'
-
 target 'ExampleApp' do
   use_frameworks!
   config = use_native_modules!
+  
+  pod 'PubStarImaAdapter', '~> 1.6.0'
 
   use_react_native!(
     :path => config[:reactNativePath],
