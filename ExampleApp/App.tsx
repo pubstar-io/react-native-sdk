@@ -10,20 +10,8 @@ import {
 } from 'react-native';
 import Pubstar, {
   NativeCustomConfig,
-  PubstarAdVideoView,
   PubstarAdView,
 } from 'rtn-pubstar';
-
-async function initRTNPubstar() {
-  try {
-    await Pubstar.initialization();
-    console.log('[APP] Pubstar.initialization was successed');
-  } catch (error) {
-    console.error('[APP] Pubstar.initialization was failed with error', error);
-  }
-}
-
-initRTNPubstar();
 
 enum PubstarAdIdForIOS {
   BANNER = '1692/99228314092',
@@ -40,8 +28,19 @@ enum PubstarAdIdForAndroid {
   INTERSTITIAL = '1687/99228314068',
   OPEN = '1687/99228314075',
   REWARDED = '1687/99228314076',
-  VIDEO = '1692/99228314124',
+  VIDEO = '1692/99228314139',
 }
+
+async function initRTNPubstar() {
+  try {
+    await Pubstar.initialization();
+    console.log('[APP] Pubstar.initialization was successed');
+  } catch (error) {
+    console.error('[APP] Pubstar.initialization was failed with error', error);
+  }
+}
+
+initRTNPubstar();
 
 const App = () => {
   const [show, setShow] = useState(false);
@@ -49,7 +48,7 @@ const App = () => {
   useEffect(() => {
     setTimeout(() => {
       setShow(true);
-    }, 3000);
+    }, 4000);
   }, []);
 
   const PubstarAdId = useMemo(() => {
@@ -155,7 +154,7 @@ const App = () => {
               adId={PubstarAdId.NATIVE}
               style={styles.ad}
               size="medium"
-              customConfig={customConfig}
+              // customConfig={customConfig}
               type="native"
               onLoaded={() => console.log('[APP] Native ad loaded')}
               onLoadedError={() => console.log('[APP] Native ad load error')}
@@ -170,7 +169,7 @@ const App = () => {
               style={styles.ad}
               size="medium"
               customConfig={customConfig}
-              type="videoInStream"
+              type="videoOutStream"
               media="https://storage.googleapis.com/gvabox/media/samples/stock.mp4"
               onLoaded={() => console.log('[APP] Video ad loaded')}
               onLoadedError={() => console.log('[APP] Video ad load error')}

@@ -1,7 +1,10 @@
 package io.rtnpubstar
 
 import android.content.Context
+import android.graphics.Color
 import android.media.MediaPlayer
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -74,6 +77,10 @@ class PubstarAdHandler {
     ) {
         val props = viewPropsMap[view] ?: return
 
+        if (props.type == "videoInStream" && props.media.isNullOrEmpty()) {
+            return
+        }
+
         if (
             !props.adId.isNullOrEmpty() &&
             !props.size.isNullOrEmpty() &&
@@ -126,7 +133,10 @@ class PubstarAdHandler {
             }
 
             override fun onError(code: ErrorCode) {
-                Log.d("[TEST]", "[PubstarAdHandle][adNetShowListener] onError: ${code.code} - ${code.name}")
+                Log.d(
+                    "[TEST]",
+                    "[PubstarAdHandle][adNetShowListener] onError: ${code.code} - ${code.name}"
+                )
                 onShowedError(code)
             }
         }
@@ -138,12 +148,13 @@ class PubstarAdHandler {
             }
 
             override fun onError(code: ErrorCode) {
-                Log.d("[TEST]", "[PubstarAdHandle][adNetLoaderListener] onError: ${code.code} - ${code.name}")
+                Log.d(
+                    "[TEST]",
+                    "[PubstarAdHandle][adNetLoaderListener] onError: ${code.code} - ${code.name}"
+                )
                 onLoadedError(code)
             }
         }
-
-        Log.d("[TEST]", "[PubstarAdHandle][loadAndShowWhenReady] type is: ${data.type}")
 
         when (data.type) {
             "banner" -> {
@@ -169,13 +180,14 @@ class PubstarAdHandler {
                 )
             }
 
-            "video" -> {
+            "videoOutStream",
+            "videoInStream" -> {
                 loadAndShowVideo(
                     context = context,
                     view = view,
                     adId = data.adId!!,
-                    media = "https://storage.googleapis.com/gvabox/media/samples/stock.mp4",
-                    type = IMARequest.Type.OUT_STREAM,
+                    type = data.type!!,
+                    media = data.media,
                     adLoaderListener = adNetLoaderListener,
                     adShowListener = adNetShowListener
                 )
@@ -214,8 +226,7 @@ class PubstarAdHandler {
         val binder = buildNativeAdViewBinder(context, config)
 
         val requestNative = NativeAdRequest.Builder(context)
-//            .sizeType(size)
-            .sizeType(NativeAdRequest.Type.Custom)
+            .sizeType(size)
             .withView(view)
             .withNativeAdViewBinderCustom(binder)
             .adLoaderListener(adLoaderListener)
@@ -230,32 +241,51 @@ class PubstarAdHandler {
         context: Context,
         view: ViewGroup,
         adId: String,
-        media: String,
-        type: IMARequest.Type,
+        type: String,
+        media: String?,
         adLoaderListener: AdLoaderListener,
         adShowListener: AdShowedListener
     ) {
-        val request = IMARequest.Builder(context)
-            .withView(view)
-            .withSize(IMARequest.Size.Medium)
-            .withType(type)
-            .adLoaderListener(adLoaderListener)
-            .adShowedListener(adShowListener)
-
-        if (type == IMARequest.Type.IN_STREAM) {
-            this.createVideoForInStreamAds(
-                context = context,
-                containerView = view,
-                path = media,
-                callback = { player ->
-                    request.withMedia(player)
+        when (type) {
+            "videoInStream" -> {
+                if (media == null) {
+                    return
                 }
-            )
+
+                Handler(Looper.getMainLooper()).post {
+                    val request = IMARequest.Builder(context)
+                        .withView(view)
+                        .withSize(IMARequest.Size.Medium)
+                        .withType(IMARequest.Type.IN_STREAM)
+                        .adLoaderListener(adLoaderListener)
+                        .adShowedListener(adShowListener)
+
+                    this.createVideoForInStreamAds(
+                        context = context,
+                        containerView = view,
+                        path = media,
+                        callback = { player ->
+                            request.withMedia(player)
+                        }
+                    )
+
+                    pubStarAdController.loadAndShow(adId, request.build())
+                }
+            }
+
+            "videoOutStream" -> {
+                val request = IMARequest.Builder(context)
+                    .withView(view)
+                    .withSize(IMARequest.Size.Medium)
+                    .withType(IMARequest.Type.OUT_STREAM)
+                    .adLoaderListener(adLoaderListener)
+                    .adShowedListener(adShowListener)
+                    .build()
+
+                pubStarAdController.loadAndShow(adId, request)
+            }
         }
-
-        pubStarAdController.loadAndShow(adId, request.build())
     }
-
 
     private fun createVideoForInStreamAds(
         context: Context,
@@ -270,6 +300,7 @@ class PubstarAdHandler {
             ViewGroup.LayoutParams.MATCH_PARENT
         )
         videoPlayer.layoutParams = layoutParams
+
         containerView.addView(videoPlayer)
 
         videoPlayer.setVideoPath(path)

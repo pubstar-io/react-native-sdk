@@ -84,10 +84,12 @@ const PubstarAdView = ({
     onShowedError?.(errorCode);
   }
 
+  const sizeOfNativeAd = customConfig ? "custom" : size
+
   return (
     <PubstarAdViewNativeComponent
       adId={adId}
-      size={size}
+      size={sizeOfNativeAd}
       style={StyleSheet.flatten([{ height, width: "100%" }, style])}
       type={type}
       media={media}

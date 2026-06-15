@@ -198,4 +198,26 @@ class PubstarAdViewManager() : SimpleViewManager<FrameLayout>(),
             })
         }
     }
+
+    @ReactProp(name = "media")
+    override fun setMedia(view: FrameLayout, value: String?) {
+        if (value.isNullOrEmpty()) {
+            return
+        }
+
+        pubstarHandle.props(view).media = value
+        view.post {
+            pubstarHandle.onlyLoadAndShowAdWhenAllPropsSet(view = view, onLoaded = {
+                sendOnLoadedEvent(view)
+            }, onLoadedError = { errorCode ->
+                setOnLoadedError(view, errorCode)
+            }, onShowed = {
+                setOnShowed(view)
+            }, onHide = { reward ->
+                setOnHide(view, reward)
+            }, onShowedError = { errorCode ->
+                setOnShowedError(view, errorCode)
+            })
+        }
+    }
 }
