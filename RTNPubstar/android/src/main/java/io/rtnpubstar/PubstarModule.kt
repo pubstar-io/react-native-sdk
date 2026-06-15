@@ -121,7 +121,7 @@ class PubstarModule(reactContext: ReactApplicationContext) : NativeRTNPubstarSpe
         onShowError: Callback
     ) {
         pubStarAdController.loadAndShow(
-            reactApplicationContext,
+            reactApplicationContext.currentActivity,
             adId,
             null,
             object : AdLoaderListener {
