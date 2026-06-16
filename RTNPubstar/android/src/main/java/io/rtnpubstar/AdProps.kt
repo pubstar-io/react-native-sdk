@@ -1,5 +1,6 @@
 package io.rtnpubstar
 
+import com.facebook.react.bridge.ReadableMap
 import io.pubstar.mobile.core.base.BannerAdRequest
 import io.pubstar.mobile.core.base.NativeAdRequest
 
@@ -7,7 +8,9 @@ data class AdProps(
     var adId: String? = null,
     var size: String? = null,
     var type: String? = null,
-    var isRendered: Boolean = false
+    var media: String? = null,
+    var isRendered: Boolean = false,
+    var customConfig: ReadableMap? = null
 ) {
     fun getBannerSize(): BannerAdRequest.AdTag {
         when (this.size) {
@@ -40,6 +43,10 @@ data class AdProps(
             "large" -> {
                 return NativeAdRequest.Type.Big
             }
+
+            "custom" -> {
+                return NativeAdRequest.Type.Custom
+            }
         }
 
         return NativeAdRequest.Type.Small
@@ -49,6 +56,7 @@ data class AdProps(
         adId = null
         size = null
         type = null
+        media = null
         isRendered = false
     }
 }

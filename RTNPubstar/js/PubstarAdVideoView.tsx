@@ -1,6 +1,6 @@
 import React, { memo, useState } from "react";
 import { StyleProp, StyleSheet, ViewStyle, Platform } from "react-native";
-import PubstarAdViewNativeComponent from "./PubstarAdViewNativeComponent";
+import PubstarAdViewVideoNativeComponent from "./PubstarAdViewVideoNativeComponent";
 import { RewardModel, ErrorCode } from "./NativeRTNPubstar";
 import { NativeCustomConfig } from "./NativeCustomConfig";
 
@@ -8,14 +8,13 @@ const BannerHeight = { small: 78, medium: 130, large: 260 };
 const NativeHeight = { small: 78, medium: 130, large: 299 };
 
 type PubstarAdSize = "small" | "medium" | "large";
-type PubstarAdType = "banner" | "native" | "video" | "videoInStream" | "videoOutStream";
+type PubstarAdType = "banner" | "native" | "video";
 
 interface Props {
   adId: string;
   style?: StyleProp<ViewStyle>;
   size?: PubstarAdSize;
   type: PubstarAdType;
-  media?: string;
   customConfig?: NativeCustomConfig;
   onLoaded?: () => void;
   onLoadedError?: (errorCode: ErrorCode) => void;
@@ -24,12 +23,11 @@ interface Props {
   onShowedError?: (errorCode: ErrorCode) => void;
 }
 
-const PubstarAdView = ({
+const PubstarAdVideoView = ({
   adId,
   size = "small",
   style,
   type,
-  media,
   customConfig,
   onLoaded,
   onLoadedError,
@@ -52,7 +50,7 @@ const PubstarAdView = ({
       return NativeHeight[size] ?? NativeHeight.small;
     }
 
-    return NativeHeight.small;
+    return NativeHeight.large;
   }
 
   const [height, setHeight] = useState(() => {
@@ -84,15 +82,12 @@ const PubstarAdView = ({
     onShowedError?.(errorCode);
   }
 
-  const sizeOfNativeAd = customConfig ? "custom" : size
-
   return (
-    <PubstarAdViewNativeComponent
+    <PubstarAdViewVideoNativeComponent
       adId={adId}
-      size={sizeOfNativeAd}
+      size={size}
       style={StyleSheet.flatten([{ height, width: "100%" }, style])}
       type={type}
-      media={media}
       customConfig={customConfig}
       onLoaded={onLoaded}
       onLoadedError={handleOnLoadedError}
@@ -103,4 +98,4 @@ const PubstarAdView = ({
   );
 };
 
-export default memo(PubstarAdView);
+export default memo(PubstarAdVideoView);

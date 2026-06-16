@@ -31,6 +31,6 @@
             android:value="ca-app-pub-3940256099942544~3347511713"/>
         <meta-data
             android:name="io.pubstar.key"
-            android:value="pub-app-id-1241" />
+            android:value="pub-app-id-1692" />
     </application>
 </manifest>

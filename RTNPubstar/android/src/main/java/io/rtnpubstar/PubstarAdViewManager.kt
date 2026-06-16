@@ -1,5 +1,6 @@
 package io.rtnpubstar
 
+import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import com.facebook.react.module.annotations.ReactModule
@@ -9,6 +10,7 @@ import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.PubstarAdViewManagerDelegate
 import com.facebook.react.viewmanagers.PubstarAdViewManagerInterface
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.uimanager.UIManagerHelper
 import io.pubstar.mobile.core.models.ErrorCode
 import io.pubstar.mobile.core.models.RewardModel
@@ -138,6 +140,21 @@ class PubstarAdViewManager() : SimpleViewManager<FrameLayout>(),
         }
     }
 
+    override fun setCustomConfig(
+        view: FrameLayout?,
+        value: ReadableMap?
+    ) {
+        if (view == null) {
+            return
+        }
+
+        if (value?.getString("layoutName") == null) {
+            return
+        }
+
+        pubstarHandle.props(view).customConfig = value
+    }
+
     @ReactProp(name = "adId")
     override fun setAdId(view: FrameLayout, value: String?) {
         if (value.isNullOrEmpty()) {
@@ -166,8 +183,29 @@ class PubstarAdViewManager() : SimpleViewManager<FrameLayout>(),
             return
         }
 
-
         pubstarHandle.props(view).type = value
+        view.post {
+            pubstarHandle.onlyLoadAndShowAdWhenAllPropsSet(view = view, onLoaded = {
+                sendOnLoadedEvent(view)
+            }, onLoadedError = { errorCode ->
+                setOnLoadedError(view, errorCode)
+            }, onShowed = {
+                setOnShowed(view)
+            }, onHide = { reward ->
+                setOnHide(view, reward)
+            }, onShowedError = { errorCode ->
+                setOnShowedError(view, errorCode)
+            })
+        }
+    }
+
+    @ReactProp(name = "media")
+    override fun setMedia(view: FrameLayout, value: String?) {
+        if (value.isNullOrEmpty()) {
+            return
+        }
+
+        pubstarHandle.props(view).media = value
         view.post {
             pubstarHandle.onlyLoadAndShowAdWhenAllPropsSet(view = view, onLoaded = {
                 sendOnLoadedEvent(view)
