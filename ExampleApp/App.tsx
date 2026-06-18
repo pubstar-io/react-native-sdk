@@ -14,19 +14,19 @@ import Pubstar, {
 } from 'rtn-pubstar';
 
 enum PubstarAdIdForIOS {
-  BANNER = '1692/99228314092',
-  NATIVE = '1692/99228314093',
-  INTERSTITIAL = '1692/99228314089',
-  OPEN = '1692/99228314090',
+  BANNER = '1277/99228313841',
+  NATIVE = '1277/99228313830',
+  INTERSTITIAL = '1277/99228313850',
+  OPEN = '1277/99228313844',
   REWARDED = '1692/99228314091',
   VIDEO = '1687/99228314138',
 }
 
 enum PubstarAdIdForAndroid {
-  BANNER = '1687/99228314074',
-  NATIVE = '1687/99228314077',
-  INTERSTITIAL = '1687/99228314068',
-  OPEN = '1687/99228314075',
+  BANNER = '1264/99228313741',
+  NATIVE = '1264/99228313724',
+  INTERSTITIAL = '1264/99228313740',
+  OPEN = '1264/99228313722',
   REWARDED = '1687/99228314076',
   VIDEO = '1692/99228314139',
 }
@@ -154,7 +154,7 @@ const App = () => {
               adId={PubstarAdId.NATIVE}
               style={styles.ad}
               size="medium"
-              // customConfig={customConfig}
+              customConfig={customConfig}
               type="native"
               onLoaded={() => console.log('[APP] Native ad loaded')}
               onLoadedError={() => console.log('[APP] Native ad load error')}

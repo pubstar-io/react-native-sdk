@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+### [1.6.0] - 2026-06-18
+
+- **Custom Native** — render native ads with your own layout via `NativeCustomConfig` (`customConfig` on `PubstarAdView`).
+- **Video (IMA)** — `PubstarAdView` with video `type` (`videoInStream` / `videoOutStream`) and a `media` URL; dedicated `PubstarAdVideoView` component also available.
+- Updated README with full Usage guide (Init / Load / Show / LoadAndShow, Banner & Native, Custom Native, Video IMA) aligned with the Android and iOS SDKs.
+
 ### [1.5.0] - 2026-01-25
 
 - **OpenRTB (ORTB) Bidding Adapter**

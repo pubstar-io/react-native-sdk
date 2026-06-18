@@ -34,9 +34,26 @@ class PubstarAdViewManager() : SimpleViewManager<FrameLayout>(),
     override fun getName(): String = NAME
 
     override fun createViewInstance(reactContext: ThemedReactContext): FrameLayout {
-        val view = FrameLayout(reactContext)
+        // React Native (Paper/Fabric) only lays out views it knows about via
+        // Yoga. The Pubstar SDK adds the banner/native ad views into this
+        // container imperatively (`withView(view)`), so they never receive a
+        // measure/layout pass and end up at 0x0 (visible as a blank view even
+        // though onLoaded/onShowed succeed). Re-post a manual measure+layout
+        // whenever a layout is requested so the ad children become visible.
+        return object : FrameLayout(reactContext) {
+            private val measureAndLayout = Runnable {
+                measure(
+                    MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+                    MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
+                )
+                layout(left, top, right, bottom)
+            }
 
-        return view
+            override fun requestLayout() {
+                super.requestLayout()
+                post(measureAndLayout)
+            }
+        }
     }
 
     private fun sendOnLoadedEvent(view: View) {

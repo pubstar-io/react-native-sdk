@@ -7,14 +7,13 @@ on:
       - main
     paths:
       - 'RTNPubstar/package.json'
-      - '!RTNPubstar/generated/'
 
 permissions:
   contents: write
 
 jobs:
   publish:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     defaults:
       run:
         working-directory: ./RTNPubstar
@@ -25,31 +24,36 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Lấy version từ package.json bằng jq
+      - name: Extract version from package.json
+        id: pkg
         run: |
-          # Đọc file package.json và lấy raw text của trường version
           EXTRACTED_VERSION=$(jq -r .version package.json)
-          
-          # Lưu vào GitHub Environment Variables để dùng ở các bước sau
-          echo "version=$EXTRACTED_VERSION" >> $GITHUB_ENV
-          echo "tag=v$EXTRACTED_VERSION" >> $GITHUB_ENV
+
+          if [ -z "$EXTRACTED_VERSION" ] || [ "$EXTRACTED_VERSION" = "null" ]; then
+            echo "❌ RTNPubstar/package.json missing version"
+            exit 1
+          fi
+
+          echo "version=$EXTRACTED_VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$EXTRACTED_VERSION" >> "$GITHUB_OUTPUT"
+          echo "Resolved version: $EXTRACTED_VERSION (tag v$EXTRACTED_VERSION)"
 
       - name: Check if Tag exists
         id: check_tag
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_SDK_IOS }}
         run: |
-          TAG_NAME="${{ steps.pubspec.outputs.tag }}"
+          TAG_NAME="${{ steps.pkg.outputs.tag }}"
           REMOTE_REPO="pubstar-io/react-native-sdk"
 
           echo "Checking tag $TAG_NAME on $REMOTE_REPO..."
 
           if gh api repos/$REMOTE_REPO/git/ref/tags/$TAG_NAME >/dev/null 2>&1; then
             echo "Tag $TAG_NAME already exists. Skipping publish to avoid error."
-            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "exists=true" >> "$GITHUB_OUTPUT"
           else
-            echo "Tag $TAG_NAME is not exists."
-            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "Tag $TAG_NAME does not exist."
+            echo "exists=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Setup Node.js
@@ -67,22 +71,21 @@ jobs:
         id: zip_step
         if: steps.check_tag.outputs.exists == 'false'
         run: |
-          ZIP_NAME="react-native-sdk-${{ steps.pubspec.outputs.version }}.zip"
-
-          git archive -o $ZIP_NAME HEAD
-          echo "zip_file=$ZIP_NAME" >> $GITHUB_OUTPUT
+          ZIP_NAME="react-native-sdk-${{ steps.pkg.outputs.version }}.zip"
+          git archive -o "$GITHUB_WORKSPACE/$ZIP_NAME" HEAD
+          echo "zip_file=$ZIP_NAME" >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub Release and upload asset
         if: steps.check_tag.outputs.exists == 'false'
         uses: softprops/action-gh-release@v2
         with:
           repository: pubstar-io/react-native-sdk
-          tag_name: ${{ steps.pubspec.outputs.tag }}
+          tag_name: ${{ steps.pkg.outputs.tag }}
           target_commitish: main
-          name: ${{ steps.pubspec.outputs.version }}
+          name: ${{ steps.pkg.outputs.version }}
           generate_release_notes: true
           files: |
-            ${{ steps.zip_project.outputs.zip_file }}
+            ${{ steps.zip_step.outputs.zip_file }}
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_SDK_IOS }}
 
