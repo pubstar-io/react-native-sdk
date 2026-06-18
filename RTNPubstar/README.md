@@ -1,26 +1,36 @@
-# rtn-pubstar
+## PubStar SDK
 
-PubStar All in One Platform provides every type of publisher with multiple ad formats: Video Instream, Outstream, Display Banner, Sticky Banners, Interstitial,
+PubStar Mobile Ads SDK is a comprehensive monetization solution that enables developers to seamlessly integrate high-performance ad formats into mobile applications across multiple platforms:
 
-Native Ad, Reward Ad, Audio Ad, Open Ad for Apps… You can maximize your ad revenue with any of them. All types of ads are responsive for all devices.
+- [iOS](https://pub-star.gitbook.io/docs/ios-sdk/integration)
+- [Android](https://pub-star.gitbook.io/docs/android-sdk/integration)
+- [React Native](https://pub-star.gitbook.io/docs/react-native-sdk/integration)
+- [Flutter](https://pub-star.gitbook.io/docs/flutter-sdk/integration)
+- [Unity](https://pub-star.gitbook.io/docs/unity-sdk/integration)
 
-You can set the frequency cap of ad requests to bring good user experience for your websites and apps.
+The SDK provides a unified and flexible API for loading, displaying, and managing ads while ensuring a non-intrusive and optimized user experience.
 
-## TOC
+> **Current version:** `1.6.0`
 
-- [Requirements](#requirements)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Usage](#usage)
-- [API](#api)
-- [Release Notes](#release-notes)
-- [ID Test Ad](#id-test-ad)
-- [Support](#support)
+### Supported Ad Formats
+
+PubStar supports the following ad formats:
+
+- Banner Ads
+- Native Ads
+- Interstitial Ads
+- App Open Ads
+- Rewarded Ad
+- Video Ads (IMA)
+
+All formats are responsive and optimized for performance and revenue maximization.
 
 ## Requirements
 
-- React Native >= 0.68 (React Natvie must support New Architecture)
-- iOS >= 13.0
+- React Native >= **0.68** (must support the New Architecture)
+- iOS >= **13.0**
+- Android `minSdk` >= **23**
+- A **PubStar App ID** from the PubStar Dashboard (format `pub-app-id-XXXX`)
 
 ## Installation
 
@@ -36,250 +46,190 @@ or using yarn:
 yarn add rtn-pubstar
 ```
 
-## Configuration
+Add your PubStar App ID:
 
-### iOS
-
-#### 1. Configure Pod.
-1. Navigate to your iOS project directory.
-
-2. Install the dependencies using pod install.
-
-```bash
-pod install
-```
-
-3. Open your project in Xcode with the .xcworkspace file.
-
-#### 2. Update your Info.plist
-
-Update your app's Info.plist file to add several keys:
-
-- A GADApplicationIdentifier key with a string value of your AdMob app ID [found in the AdMob UI](https://support.google.com/admob/answer/7356431).
-
-- A `io.pubstar.key` key with a string value of your Pubstar ad ID [found in the Pubstar Dashboard](https://pubstar.io/).
-
-- SKAdNetworkItems in Google AdMob refers to the necessary configuration within your iOS app's Info.plist file to support Apple's SKAdNetwork for conversion tracking, particularly when using the Google Mobile Ads SDK for AdMob [found in the AdMob privacy](https://developers.google.com/admob/ios/privacy/strategies).
+- **Android** — in `AndroidManifest.xml`, inside `<application>`:
 
 ```xml
-<key>GADApplicationIdentifier</key>
-<string>Your AdMob app ID</string>
-<key>SKAdNetworkItems</key>
-	<array>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>cstr6suwn9.skadnetwork</string>
-		</dict>
-
-        ...
-
-        <dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>3qcr597p9d.skadnetwork</string>
-		</dict>
-    </array>
-<key>NSUserTrackingUsageDescription</key>
-<string>We use your data to show personalized ads and improve your experience.</string>
-<key>io.pubstar.key</key>
-<string>Your Pubstar app ID</string>
-```
-
-### Android
-
-#### 1. Add Pubstar Key to AndroidManifest.
-Open `AndroidManifest.xml` and add inside `<application>`:
-
-```bash
 <meta-data
   android:name="io.pubstar.key"
   android:value="pub-app-id-XXXX" />
 ```
-Replace pub-app-id-XXXX with your actual [Pubstar App ID](https://pubstar.io/).  
+
+- **iOS** — in `Info.plist`:
+
+```xml
+<key>io.pubstar.key</key>
+<string>pub-app-id-XXXX</string>
+```
+
+> Replace `pub-app-id-XXXX` with your real App ID (for example `pub-app-id-1233`). Do not ship production builds with a placeholder value.
 
 ## Usage
 
-```js
-import Pubstar, { PubstarAdView } from 'rtn-pubstar';
-```
+### Init SDK
 
-## API
-
-The example app in this repository shows an example usage of every single API, consult the example app if you have questions, and if you think you see a problem make sure you can reproduce it using the example app before reporting it, thank you.
-
-| Method                                                              | Return Type         |
-| ------------------------------------------------------------------- | ------------------- |
-| [initialization()](#initialization)                                 | `Promise<void>`     |
-| [loadAd()](#loadad)                                                 | `Promise<void>`     |
-| [showAd()](#showad)                                                 | `Promise<void>`     |
-| [loadAndShow()](#loadandshow)                                       | `Promise<void>`     |
-| [PubstarAdView](#pubstaradview)                                     | `React component`   |
-
-### initialization()
-
-Initialization Pubstar SDK.
+Initialization must be called once before loading or showing ads.
 
 ```js
-Pubstar.initialization();
+import Pubstar from 'rtn-pubstar';
+
+try {
+    await Pubstar.initialization();
+    // ready to load and show ads
+} catch (error) {
+    // init error
+}
 ```
 
-### loadAd(adId, callbackEvent)
-
-Load Pubstar ads by adId to application.
-
-#### Event
-
-ShowListener
-
-| Callback                             | Function                                                   |
-| ------------------------------------ | ---------------------------------------------------------- |
-| `onLoadError`                        | call when load ad failed. return object type `ErrorCode`   |
-| `onLoaded`                           | call when ad loaded                                        |
-
-#### Example
+### Load AD
 
 ```js
 Pubstar.loadAd(adId, {
-    onLoadError: errorCode => {
-        console.error('Ad load error:', errorCode);
-    },
-    onLoaded: () => {
-        console.log('Ad loaded');
-    },
-})
+    onLoaded: () => { /* ad loaded */ },
+    onLoadError: errorCode => { /* ad load error */ },
+});
 ```
 
-### showAd(adId, callbackEvent)
-
-Show ad had loaded before.
-
-#### Event
-
-ShowListener
-
-| Callback                | Function                                                                       |
-| ----------------------- | ------------------------------------------------------------------------------ |
-| `onAdHide`              | call when ad hidden by press close button. return object type `ErrorCode`      |
-| `onAdShowed`            | call when ad showed                                                            |
-| `onShowError`           | call when show ad failed. return object type `ErrorCode`                       |
-
-#### Example
+### Show AD
 
 ```js
 Pubstar.showAd(adId, {
-    onAdHide: reward => {
-        console.log('Ad hidden', reward);
-    },
-    onAdShowed: () => {
-        console.log('Ad showed');
-    },
-    onShowError: errorCode => {
-        console.error('Ad show error:', errorCode);
-    },
+    onAdShowed: () => { /* ad showed */ },
+    onAdHide: reward => { /* ad hidden, optional reward */ },
+    onShowError: errorCode => { /* error */ },
 });
-
 ```
 
-### loadAndShow(adId, callbackEvent)
-
-Load ad then show ad in one.
-
-#### Event
-
-LoadAndShowListener
-
-| Callback                | Function                                                                       |
-| ----------------------- | ------------------------------------------------------------------------------ |
-| `onLoadError`           | call when load ad failed. return object type `ErrorCode`                       |
-| `onLoaded`              | call when ad loaded                                                            |
-| `onAdHide`              | call when ad hidden by press close button. return object type `RewardModel`    |
-| `onAdShowed`            | call when ad showed                                                            |
-| `onShowError`           | call when show ad failed. return object type `ErrorCode`                       |
-
-#### Example
+### Load And Show AD
 
 ```js
-Pubstar.loadAndShowAd(
-    adId, {
-        onLoadError: errorCode => {
-            console.error('Ad load error:', errorCode);
-        },
-        onLoaded: () => {
-            console.log('Ad loaded');
-        },
-        onAdHide: reward => {
-            console.log('Ad hidden', reward);
-        },
-        onAdShowed: () => {
-            console.log('Ad showed');
-        },
-        onShowError: errorCode => {
-            console.error('Ad show error:', errorCode);
-        },
-    }
-);
-
+Pubstar.loadAndShowAd(adId, {
+    onLoaded: () => { /* ad loaded */ },
+    onLoadError: errorCode => { /* ad load error */ },
+    onAdShowed: () => { /* ad showed */ },
+    onAdHide: reward => { /* ad hidden, optional reward */ },
+    onShowError: errorCode => { /* error */ },
+});
 ```
 
-### PubstarAdView
+### Banner & Native
 
-Load ad then show ad, using for Banner ad and Native ad.
-
-#### API
-
-| Props                   | Function                                                                       |
-| ----------------------- | ------------------------------------------------------------------------------ |
-| `adId`                  | id of Banner or Native ad                                                      |
-| `size`                  | size of ad View. (`small`, `medium`, `large`)                                  |
-| `type`                  | kind of ad View. (`banner`, `native`)                                          |
-| `onLoaded`              | call when ad loaded                                                            |
-| `onLoadedError`         | call when load ad failed. return object type `ErrorCode`                       |
-| `onShowed`              | call when ad showed                                                            |
-| `onHide`                | call when ad closed return object type `RewardModel`                           |
-| `onShowedError`         | call when show ad failed. return object type `ErrorCode`                       |
-
-#### Example
+Use `PubstarAdView` for view-based formats (`banner`, `native`):
 
 ```jsx
+import { PubstarAdView } from 'rtn-pubstar';
+
+<PubstarAdView
+    adId={adId}
+    style={styles.ad}
+    size="medium" // small, medium, large
+    type="native" // banner or native
+    onLoaded={() => { /* ad loaded */ }}
+    onLoadedError={errorCode => { /* ad load error */ }}
+    onShowed={() => { /* ad showed */ }}
+    onHide={reward => { /* ad hidden, optional reward */ }}
+    onShowedError={errorCode => { /* show error */ }}
+/>
+```
+
+### Custom Native — your own layout
+
+Beyond the preset sizes, you can render a native ad with **your own layout**. Design the layout natively (Android XML / iOS view), then map your view IDs to the ad fields with a `NativeCustomConfig` and pass it via `customConfig`.
+
+```jsx
+import { Platform } from 'react-native';
+import { PubstarAdView, NativeCustomConfig } from 'rtn-pubstar';
+
+const customConfig = useMemo(() => {
+    if (Platform.OS === 'android') {
+        return new NativeCustomConfig.Builder('pubstar_applovin_native_big')
+            .setAdvertiserTextViewId('ad_advertiser')
+            .setIconImageViewId('ad_logo')
+            .setTitleTextViewId('ad_headline')
+            .setMediaContentViewGroupId('ad_media')
+            .setBodyTextViewId('ad_body')
+            .setCallToActionButtonId('ad_call_to_action')
+            .setLoadingViewName('pubstar_shimmer_native_big')
+            .setCtaColorHex('#FFFFFF')
+            .build();
+    }
+
+    // iOS
+    return new NativeCustomConfig.Builder('AppAdmobNativeCustom')
+        .setAdvertiserTextViewId('1')
+        .setIconImageViewId('2')
+        .setTitleTextViewId('3')
+        .setMediaContentViewGroupId('4')
+        .setBodyTextViewId('5')
+        .setCallToActionButtonId('6')
+        .setLoadingViewName('AppShimmerBanner')
+        .build();
+}, []);
+
+<PubstarAdView
+    adId={adId}
+    style={styles.ad}
+    type="native"
+    customConfig={customConfig}
+    onLoaded={() => { /* ad loaded */ }}
+    onLoadedError={errorCode => { /* ad load error */ }}
+    onShowed={() => { /* ad showed */ }}
+    onHide={reward => { /* ad hidden */ }}
+    onShowedError={errorCode => { /* show error */ }}
+/>
+```
+
+> The view IDs/layout names refer to **native resources** in your host app. When `customConfig` is provided, the `size` prop is ignored — the ad fills your custom layout.
+
+### Video (IMA)
+
+Render a video (IMA) ad with `PubstarAdView` using a video `type` (`videoInStream` / `videoOutStream`) and a `media` URL:
+
+```jsx
+import { PubstarAdView } from 'rtn-pubstar';
+
 <PubstarAdView
     adId={adId}
     style={styles.ad}
     size="medium"
-    type="banner"
-    onLoaded={() => {
-        console.log('Banner ad loaded');
-    }}
-    onLoadedError={(errorCode) => console.log('Banner ad load error', errorCode)}
-    onShowed={() => {
-        console.log('Banner ad showed');
-    }}
-    onHide={() => console.log('Banner ad hidden')}
-    onShowedError={(errorCode) => console.log('Banner ad showed error:', errorCode)}
+    type="videoOutStream" // videoOutStream or videoInStream
+    media="https://storage.googleapis.com/gvabox/media/samples/stock.mp4"
+    onLoaded={() => { /* ad loaded */ }}
+    onLoadedError={errorCode => { /* ad load error */ }}
+    onShowed={() => { /* ad showed */ }}
+    onHide={reward => { /* ad hidden */ }}
+    onShowedError={errorCode => { /* show error */ }}
 />
 ```
 
-## Release Notes
+- `videoOutStream`: a standalone video ad placed in your layout.
+- `videoInStream`: the ad plays inside your own video content stream.
 
-See the [CHANGELOG.md](https://github.com/pubstar-io/react-native-sdk/blob/main/CHANGELOG.md).
+> A dedicated `PubstarAdVideoView` component is also available (same props, `type="video"`).
 
 ## ID Test AD
 
-```python
-App ID : pub-app-id-1233
-Banner Id : 1233/99228313580
-Native ID : 1233/99228313581
+Pair these with App ID `pub-app-id-1233`. Replace them with production placement keys before shipping.
+
+```text
+App ID          : pub-app-id-1233
+Banner ID       : 1233/99228313580
+Native ID       : 1233/99228313581
 Interstitial ID : 1233/99228313582
-Open ID : 1233/99228313583
-Rewarded ID : 1233/99228313584
-Video ID : 1233/99228313585
+Open ID         : 1233/99228313583
+Rewarded ID     : 1233/99228313584
+Video ID        : 1233/99228313585
 ```
 
-## Support
-Email: developer@tqcsolution.com
+### Documentation
 
-Raise an issue on GitHub for bugs or feature requests.
+[**Guides**](https://pub-star.gitbook.io/docs/)
+
+### Support
+
+[Support](https://pub-star.gitbook.io/docs/support)
 
 ## License
 
-Pubstar is released under the [Apache License 2.0](https://choosealicense.com/licenses/apache-2.0/).
-
-License agreement is available at [LICENSE](LICENSE).
+[Apache License 2.0](https://choosealicense.com/licenses/apache-2.0/)

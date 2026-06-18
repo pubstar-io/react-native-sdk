@@ -91,6 +91,9 @@ jobs:
 
       - name: Publish to NPM
         if: steps.check_tag.outputs.exists == 'false'
-        run: npm publish --access public
+        # --tag latest is required: npm refuses to publish a prerelease
+        # version (e.g. 1.6.0-1) without an explicit tag, and "latest" is
+        # what makes the npm package page show this version's README.
+        run: npm publish --access public --tag latest
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

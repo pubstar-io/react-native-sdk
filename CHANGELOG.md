@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+### [1.6.0-1] - 2026-06-18
+
+- Fixed Android banner/native ads not appearing in the view despite successful load/show (manual measure+layout pass for imperatively-added ad views).
+- README now synced from the repo root automatically on publish, so the npm page stays up to date.
+
 ### [1.6.0] - 2026-06-18
 
 - **Custom Native** — render native ads with your own layout via `NativeCustomConfig` (`customConfig` on `PubstarAdView`).
