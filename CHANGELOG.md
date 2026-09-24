@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+### [1.6.2] - 2026-09-24
+
+- Bumped the native SDKs to `1.6.2` (iOS `Pubstar ~> 1.6.2`, Android `io.pubstar.mobile:ads:1.6.2`), which brings the reporting work from that release: `app_crash` / `app_session` on their own endpoint, a `screen` dimension on every metric, the `load_time` metric, `display_time` measuring time-to-show for full-screen formats, and one `impression` per `sdk_request` per placement.
+- **iOS behaviour change:** a missing `io.pubstar.key` in `Info.plist` now fails at initialization instead of silently falling back to the built-in debug App ID. An app that was misconfigured this way used to keep running while every report it sent landed on the debug app; it will now stop at init. This matches what Android has always done.
+- README: no longer suggests the test App ID `pub-app-id-1233` as an example of a real App ID, and states that the key is required.
+- **Fixed iOS initialization failing with `-7` (`NO_INIT`) in Release builds.** The bridge looked up the host view controller once, on the first call, from React Native's background module queue. When `initialization()` ran on mount — before the scene was foreground-active — the lookup returned nil and stayed nil for the life of the app, so init rejected and every load/show returned silently. The lookup now runs on the main thread, is retried until found, and waits for the scene to become active instead of failing. Affects 1.6.1 and earlier.
+
 ### [1.6.1] - 2026-06-09
 
 - Fixed iOS initialization ignoring the app's `io.pubstar.key` from `Info.plist`. The iOS bridge forced `setIsDebug(true)`, which made the native SDK initialize with the built-in debug App ID instead of the publisher's real App ID, so the init config never matched the app's ad unit IDs.

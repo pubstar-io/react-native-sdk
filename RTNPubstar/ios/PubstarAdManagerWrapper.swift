@@ -12,8 +12,21 @@ import Pubstar
 public final class PubstarAdManagerWrapper {
     private static let _pubStarAdManager = PubStarAdManager.getInstance()
     private static let _pubStarAdController = PubStarAdManager.getAdController()
-    private static var _context: UIViewController? =
-        PubStarUtils.getHostingViewController()
+    private static var _cachedContext: UIViewController?
+
+    /// Resolved lazily and retried until found. The old `static var _context =
+    /// PubStarUtils.getHostingViewController()` ran its initializer exactly once, on
+    /// first access — which is `Pubstar.initialization()`, usually called from JS on
+    /// mount. In a Release build the embedded bundle runs before the scene is
+    /// foreground-active, the lookup returns nil, and `_context` then stayed nil for
+    /// the life of the process: init rejected with NO_INIT (-7) and every load/show
+    /// returned silently. Must be read on the main thread.
+    private static var _context: UIViewController? {
+        if _cachedContext == nil {
+            _cachedContext = PubStarUtils.getHostingViewController()
+        }
+        return _cachedContext
+    }
 
     private init() {
 
@@ -23,8 +36,21 @@ public final class PubstarAdManagerWrapper {
         onDone: @escaping () -> Void,
         onError: @escaping (ErrorCode) -> Void
     ) {
+        // React Native invokes module methods on a background queue; the scene and
+        // window lookup behind `_context` is UIKit and has to run on main.
+        guard Thread.isMainThread else {
+            DispatchQueue.main.async { initPubstar(onDone: onDone, onError: onError) }
+            return
+        }
         guard let context = _context else {
-            onError(ErrorCode.NO_INIT)
+            // No foreground-active scene yet. Wait for one instead of failing for good.
+            waitForActiveScene {
+                if _context != nil {
+                    initPubstar(onDone: onDone, onError: onError)
+                } else {
+                    onError(ErrorCode.NO_INIT)
+                }
+            }
             return
         }
 
@@ -48,6 +74,27 @@ public final class PubstarAdManagerWrapper {
                     .initAd()
             })
         )
+    }
+
+    /// Calls `then` once a scene is foreground-active, or after 20 s at the latest.
+    private static func waitForActiveScene(_ then: @escaping () -> Void) {
+        var token: NSObjectProtocol?
+        var finished = false
+        let finish = {
+            guard !finished else { return }
+            finished = true
+            if let token = token { NotificationCenter.default.removeObserver(token) }
+            then()
+        }
+        token = NotificationCenter.default.addObserver(
+            forName: UIScene.didActivateNotification, object: nil, queue: .main
+        ) { _ in finish() }
+        // The scene may have activated between the failed lookup and registering the
+        // observer; that notification would never arrive.
+        DispatchQueue.main.async {
+            if PubStarUtils.getHostingViewController() != nil { finish() }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 20) { finish() }
     }
 
     public static func loadAd(

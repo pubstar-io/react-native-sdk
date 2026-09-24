@@ -1,6 +1,6 @@
 {
   "name": "rtn-pubstar",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "description": "PubStar AD SDK helps developers easily integrate ads into your apps.",
   "source": "js/index",
   "react-native": "js/index",
