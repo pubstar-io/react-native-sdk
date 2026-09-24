@@ -10,8 +10,11 @@ on:
 
 permissions:
   contents: write
-  # Lets `npm publish` use npm Trusted Publishing (OIDC) once it is configured
-  # for this package on npmjs.com, instead of a long-lived NPM_TOKEN.
+  # npm Trusted Publishing: `npm publish` authenticates with a short-lived OIDC
+  # token from this workflow, configured on npmjs.com under rtn-pubstar ->
+  # Settings -> Trusted Publisher (pubstar-io/react-native-sdk, main.yml).
+  # The package's publishing access is "require 2FA and disallow tokens", so a
+  # classic/granular NPM_TOKEN is rejected no matter how fresh it is.
   id-token: write
 
 jobs:
@@ -85,6 +88,14 @@ jobs:
           node-version: '24.x'
           registry-url: 'https://registry.npmjs.org'
 
+      - name: Update npm for trusted publishing
+        if: steps.npm.outputs.published == 'false'
+        # Trusted publishing needs npm >= 11.5.1. setup-node may resolve 24.x to an
+        # older Node already cached on the runner (24.0.0 ships npm 11.3.0).
+        run: |
+          npm install -g npm@11
+          npm --version
+
       - name: Install dependencies
         if: steps.npm.outputs.published == 'false'
         run: yarn install --frozen-lockfile
@@ -98,9 +109,9 @@ jobs:
         # --tag latest is required: npm refuses to publish a prerelease
         # version (e.g. 1.6.0-1) without an explicit tag, and "latest" is
         # what makes the npm package page show this version's README.
+        # No NODE_AUTH_TOKEN: authentication is the OIDC exchange (see permissions).
+        # Provenance is attached automatically for a public package published this way.
         run: npm publish --access public --tag latest
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Zip project source code using git
         id: zip_step
