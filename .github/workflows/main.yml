@@ -10,6 +10,9 @@ on:
 
 permissions:
   contents: write
+  # Lets `npm publish` use npm Trusted Publishing (OIDC) once it is configured
+  # for this package on npmjs.com, instead of a long-lived NPM_TOKEN.
+  id-token: write
 
 jobs:
   publish:
@@ -27,6 +30,7 @@ jobs:
       - name: Extract version from package.json
         id: pkg
         run: |
+          NAME=$(jq -r .name package.json)
           EXTRACTED_VERSION=$(jq -r .version package.json)
 
           if [ -z "$EXTRACTED_VERSION" ] || [ "$EXTRACTED_VERSION" = "null" ]; then
@@ -34,22 +38,40 @@ jobs:
             exit 1
           fi
 
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
           echo "version=$EXTRACTED_VERSION" >> "$GITHUB_OUTPUT"
           echo "tag=v$EXTRACTED_VERSION" >> "$GITHUB_OUTPUT"
-          echo "Resolved version: $EXTRACTED_VERSION (tag v$EXTRACTED_VERSION)"
+          echo "Resolved $NAME $EXTRACTED_VERSION (tag v$EXTRACTED_VERSION)"
+
+      # The registry, not the tag, decides whether to publish. The tag used to
+      # gate everything, but the GitHub Release (which creates the tag) ran
+      # BEFORE `npm publish` — so a publish that failed left a tag behind and
+      # every later run skipped the package. Publishing now comes first, and the
+      # release is only created once the version is on npm.
+      - name: Check if version is on npm
+        id: npm
+        run: |
+          NAME="${{ steps.pkg.outputs.name }}"
+          VERSION="${{ steps.pkg.outputs.version }}"
+          if [ "$(npm view "$NAME@$VERSION" version 2>/dev/null)" = "$VERSION" ]; then
+            echo "$NAME $VERSION is already on npm — skipping publish."
+            echo "published=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "$NAME $VERSION is not on npm yet."
+            echo "published=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Check if Tag exists
         id: check_tag
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_SDK_IOS }}
+          # github.token has read access to this repo; RELEASE_SDK_IOS is not a
+          # secret of this repository, so `gh` ran unauthenticated and this
+          # check always answered "does not exist".
+          GH_TOKEN: ${{ github.token }}
         run: |
           TAG_NAME="${{ steps.pkg.outputs.tag }}"
-          REMOTE_REPO="pubstar-io/react-native-sdk"
-
-          echo "Checking tag $TAG_NAME on $REMOTE_REPO..."
-
-          if gh api repos/$REMOTE_REPO/git/ref/tags/$TAG_NAME >/dev/null 2>&1; then
-            echo "Tag $TAG_NAME already exists. Skipping publish to avoid error."
+          if gh api "repos/${{ github.repository }}/git/ref/tags/$TAG_NAME" >/dev/null 2>&1; then
+            echo "Tag $TAG_NAME already exists."
             echo "exists=true" >> "$GITHUB_OUTPUT"
           else
             echo "Tag $TAG_NAME does not exist."
@@ -57,15 +79,28 @@ jobs:
           fi
 
       - name: Setup Node.js
-        if: steps.check_tag.outputs.exists == 'false'
+        if: steps.npm.outputs.published == 'false'
         uses: actions/setup-node@v4
         with:
           node-version: '24.x'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
-        if: steps.check_tag.outputs.exists == 'false'
+        if: steps.npm.outputs.published == 'false'
         run: yarn install --frozen-lockfile
+
+      - name: Validate package (dry run)
+        if: steps.npm.outputs.published == 'false'
+        run: npm pack --dry-run
+
+      - name: Publish to NPM
+        if: steps.npm.outputs.published == 'false'
+        # --tag latest is required: npm refuses to publish a prerelease
+        # version (e.g. 1.6.0-1) without an explicit tag, and "latest" is
+        # what makes the npm package page show this version's README.
+        run: npm publish --access public --tag latest
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Zip project source code using git
         id: zip_step
@@ -79,21 +114,11 @@ jobs:
         if: steps.check_tag.outputs.exists == 'false'
         uses: softprops/action-gh-release@v2
         with:
-          repository: pubstar-io/react-native-sdk
+          token: ${{ github.token }}
+          repository: ${{ github.repository }}
           tag_name: ${{ steps.pkg.outputs.tag }}
-          target_commitish: main
+          target_commitish: ${{ github.sha }}
           name: ${{ steps.pkg.outputs.version }}
           generate_release_notes: true
           files: |
             ${{ steps.zip_step.outputs.zip_file }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_SDK_IOS }}
-
-      - name: Publish to NPM
-        if: steps.check_tag.outputs.exists == 'false'
-        # --tag latest is required: npm refuses to publish a prerelease
-        # version (e.g. 1.6.0-1) without an explicit tag, and "latest" is
-        # what makes the npm package page show this version's README.
-        run: npm publish --access public --tag latest
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
